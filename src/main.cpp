@@ -6,12 +6,12 @@
 #include "Ports.h"
 #include "Utils.h"
 
-#include "Lpf2HubEmulation.h"
-#include "Lpf2Hub.h"
-#include "Lpf2Virtual/Lpf2PortVirtual.h"
-#include "Lpf2Virtual/Lpf2VirtualDevice.h"
-#include "Lpf2DeviceDescLib.h"
-#include "Lpf2Devices/ColorSensor.h"
+#include "Lpf2HubEmulation.hpp"
+#include "Lpf2Hub.hpp"
+#include "Lpf2Virtual/Lpf2PortVirtual.hpp"
+#include "Lpf2Virtual/Lpf2VirtualDevice.hpp"
+#include "Lpf2DeviceDescLib.hpp"
+#include "Lpf2Devices/ColorSensor.hpp"
 
 extern "C" int serial_vprintf(const char *fmt, va_list args)
 {
@@ -33,7 +33,7 @@ extern "C" int serial_vprintf(const char *fmt, va_list args)
 }
 
 Lpf2HubEmulation vHub("Technic Hub", Lpf2HubType::CONTROL_PLUS_HUB);
-Lpf2Hub realHub;
+Lpf2Hub hub;
 
 void setup()
 {
@@ -59,7 +59,7 @@ void setup()
     vHub.setHubBatteryLevel(50);
     vHub.setHubBatteryType(Lpf2BatteryType::NORMAL);
 #else
-    realHub.init();
+    hub.init();
 #endif
 }
 
@@ -102,17 +102,17 @@ void loop()
         ESP.restart();
     }
 #else
-    if (!realHub.isConnected() && !realHub.isConnecting())
+    if (!hub.isConnected() && !hub.isConnecting())
     {
-        realHub.init();
+        hub.init();
         vTaskDelay(500);
     }
 
     // connect flow. Search for BLE services and try to connect if the uuid of the hub is found
-    if (realHub.isConnecting())
+    if (hub.isConnecting())
     {
-        realHub.connectHub();
-        if (realHub.isConnected())
+        hub.connectHub();
+        if (hub.isConnected())
         {
             Serial.println("Connected to HUB");
         }
@@ -122,13 +122,13 @@ void loop()
         }
     }
 
-    if (realHub.isConnected())
+    if (hub.isConnected())
     {
-        realHub.update();
+        hub.update();
         static bool printedInfos = false;
-        if (!printedInfos && realHub.infoReady())
+        if (!printedInfos && hub.infoReady())
         {
-            auto s = realHub.getAllInfoStr();
+            auto s = hub.getAllInfoStr();
             for (size_t i = 0; i < s.size(); i += 128)
             {
                 Serial.write(s.data() + i, std::min<size_t>(128, s.size() - i));
@@ -137,7 +137,7 @@ void loop()
             printedInfos = true;
         }
 
-        auto &r_portA = *realHub.getPort(Lpf2PortNum(Lpf2ControlPlusHubPort::A));
+        auto &r_portA = *hub.getPort(Lpf2PortNum(Lpf2ControlPlusHubPort::A));
         if (r_portA.deviceConnected())
         {
             static bool portASetupDone = false;
@@ -153,37 +153,37 @@ void loop()
     
                 switch (device->getColorIdx())
                 {
-                case Lpf2ColorIDX::BLACK:
+                case Lpf2Color::BLACK:
                     BuitlInRGB_setColor(0, 0, 0);
                     break;
-                case Lpf2ColorIDX::BLUE:
+                case Lpf2Color::BLUE:
                     BuitlInRGB_setColor(0, 0, 50);
                     break;
-                case Lpf2ColorIDX::GREEN:
+                case Lpf2Color::GREEN:
                     BuitlInRGB_setColor(0, 50, 0);
                     break;
-                case Lpf2ColorIDX::RED:
+                case Lpf2Color::RED:
                     BuitlInRGB_setColor(50, 0, 0);
                     break;
-                case Lpf2ColorIDX::WHITE:
+                case Lpf2Color::WHITE:
                     BuitlInRGB_setColor(50, 50, 50);
                     break;
-                case Lpf2ColorIDX::YELLOW:
+                case Lpf2Color::YELLOW:
                     BuitlInRGB_setColor(50, 50, 0);
                     break;
-                case Lpf2ColorIDX::ORANGE:
+                case Lpf2Color::ORANGE:
                     BuitlInRGB_setColor(50, 20, 0);
                     break;
-                case Lpf2ColorIDX::PURPLE:
+                case Lpf2Color::PURPLE:
                     BuitlInRGB_setColor(30, 0, 30);
                     break;
-                case Lpf2ColorIDX::PINK:
+                case Lpf2Color::PINK:
                     BuitlInRGB_setColor(50, 0, 20);
                     break;
-                case Lpf2ColorIDX::LIGHTBLUE:
+                case Lpf2Color::LIGHTBLUE:
                     BuitlInRGB_setColor(0, 20, 50);
                     break;
-                case Lpf2ColorIDX::CYAN:
+                case Lpf2Color::CYAN:
                     BuitlInRGB_setColor(0, 50, 50);
                     break;
     

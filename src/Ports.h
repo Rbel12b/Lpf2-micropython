@@ -2,10 +2,10 @@
 #ifndef _PORTS_H_
 #define _PORTS_H_
 
-#include "Lpf2DeviceManager.h"
+#include "Lpf2DeviceManager.hpp"
 #include "Devices/esp32s3/device.h"
-#include "Lpf2HubEmulation.h"
-#include "Lpf2Local/Lpf2PortLocal.h"
+#include "Lpf2HubEmulation.hpp"
+#include "Lpf2Local/Lpf2PortLocal.hpp"
 
 extern Esp32s3IO portA_IO;
 extern Esp32s3IO portB_IO;

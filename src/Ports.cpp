@@ -1,9 +1,9 @@
 #include "Ports.h"
 #include "Board.h"
-#include "Lpf2Devices/DistanceSensor.h"
-#include "Lpf2Devices/ColorSensor.h"
-#include "Lpf2Devices/BasicMotor.h"
-#include "Lpf2Devices/EncoderMotor.h"
+#include "Lpf2Devices/DistanceSensor.hpp"
+#include "Lpf2Devices/ColorSensor.hpp"
+#include "Lpf2Devices/BasicMotor.hpp"
+#include "Lpf2Devices/EncoderMotor.hpp"
 #include "Utils.h"
 
 Esp32s3IO portA_IO(PORT_A_HWS);
