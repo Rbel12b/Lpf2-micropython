@@ -4,4 +4,4 @@ This is still a work-in-process implementation of a custom LEGO lpf2 Hub with an
 
 ## Core library
 
-My own implementation of the lpf2 uart protocol: [lib/Lpf2](lib/Lpf2)
+My own implementation of the lpf2 uart protocol: [rbel12b/Lpf2](https://registry.platformio.org/libraries/rbel12b/Lpf2)
