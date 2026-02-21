@@ -24,13 +24,11 @@ public:
 
     bool begin(uint32_t baudrate,
                uint32_t config = SERIAL_8N1,
-               int rx_pin = -1,
-               int tx_pin = -1,
                int id1_pin = -1,
-               int id2_pin = -1) override
+               int id2_pin = -1)
     {
-        rx_pin_ = rx_pin;
-        tx_pin_ = tx_pin;
+        rx_pin_ = id1_pin;
+        tx_pin_ = id2_pin;
         id1_pin_ = id1_pin;
         id2_pin_ = id2_pin;
         config_ = config;
@@ -220,10 +218,8 @@ public:
 
     /**
      * @brief Initialize the IO ports.
-     * @param rx_pin The RX (receive) pin number. Use -1 for default.
-     * @param tx_pin The TX (transmit) pin number. Use -1 for default.
-     * @param id1_pin The analog input connected to the TX pin, external 47k pull-up is required. (Can be the same as tx_pin)
-     * @param id2_pin The analog input connected to the RX pin, external 47k pull-up is required. (Can be the same as rx_pin)
+     * @param id1_pin The analog input connected to the TX pin, external 47k pull-up is required.
+     * @param id2_pin The analog input connected to the RX pin, external 47k pull-up is required.
      * @param pwm_pin1 The first PWM output pin. Use -1 for no PWM.
      * @param pwm_pin2 The second PWM output pin. Use -1 for no PWM.
      * @param freq The PWM frequency in Hz.
@@ -233,9 +229,9 @@ public:
      * @return 0 if initialization was successful, -1 otherwise.
      * @note Must be called before any IO operations. (Before calling init on Lpf2Port or update on Lpf2DeviceManager)
      */
-    int init(int tx_pin = -1, int rx_pin = -1, int id1_pin = -1, int id2_pin = -1, int pwm_pin1 = -1, int pwm_pin2 = -1, mcpwm_unit_t unit = mcpwm_unit_t(0), mcpwm_timer_t timer = mcpwm_timer_t(0), uint32_t freq = 1000)
+    int init(int id1_pin = -1, int id2_pin = -1, int pwm_pin1 = -1, int pwm_pin2 = -1, mcpwm_unit_t unit = mcpwm_unit_t(0), mcpwm_timer_t timer = mcpwm_timer_t(0), uint32_t freq = 1000)
     {
-        if (!m_uart.begin(115200, SERIAL_8N1, rx_pin, tx_pin, id1_pin, id2_pin))
+        if (!m_uart.begin(115200, SERIAL_8N1, id1_pin, id2_pin))
         {
             return -1;
         }

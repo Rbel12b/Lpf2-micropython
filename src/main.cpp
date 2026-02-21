@@ -5,6 +5,8 @@
 #include "BuiltInRGB.h"
 #include "Ports.h"
 #include "Utils.h"
+#include "IMU.h"
+#include "ExtSerialGPIO.h"
 
 #include "Lpf2/HubEmulation.hpp"
 #include "Lpf2/Hub.hpp"
@@ -35,11 +37,12 @@ extern "C" int serial_vprintf(const char *fmt, va_list args)
 Lpf2::HubEmulation vHub("Technic Hub", Lpf2::HubType::CONTROL_PLUS_HUB);
 Lpf2::Hub hub;
 
+
 void setup()
 {
     heap_caps_check_integrity_all(true);
     Serial.begin(981200);
-    lpf2_log_printf("booted.");
+    lpf2_log_printf("Booted.");
 
     Lpf2::DeviceRegistry::registerDefault();
     Lpf2::DeviceDescRegistry::registerDefault();
@@ -49,7 +52,12 @@ void setup()
     BuitlInRGB_init();
     BuitlInRGB_setColor(0, 0, 10);
 
-    initPorts();
+    gpio_set_pull_mode((gpio_num_t)I2C_SDA, GPIO_PULLUP_ONLY);
+    gpio_set_pull_mode((gpio_num_t)I2C_SCL, GPIO_PULLUP_ONLY);
+    I2C_HW.begin(I2C_SDA, I2C_SCL, 100000);
+
+    Ports_init();
+    IMU_init(I2C_HW);
 
     util_panStartTime = millis();
 
@@ -69,8 +77,18 @@ bool isSubscribed = false;
 void loop()
 {
     vTaskDelay(1);
+    
+    if (Serial.available()) {
+        uint8_t c = Serial.read();
+        if (c == 0x03) {
+            // Ctrl+C received
+            ESP.restart();
+        }
+    }
 
-    updatePorts();
+    Ports_update();
+    IMU_update();
+
     if (portB.deviceConnected())
     {
         auto s = portB.getInfoStr();
