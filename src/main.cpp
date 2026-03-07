@@ -85,7 +85,7 @@ void loop()
             lastBlinkstate = !lastBlinkstate;
             if (lastBlinkstate)
             {
-                BuitlInRGB_setColor(150, 150, 150);
+                BuitlInRGB_setColor(50, 50, 50);
             }
             else
             {
