@@ -158,5 +158,12 @@ int vLEDWriteCallback(uint8_t mode, const std::vector<uint8_t> &data, void* user
                 break;
         }
     }
+    else if (mode == 1 && data.size() >= 3)
+    {
+        uint8_t r = data[0];
+        uint8_t g = data[1];
+        uint8_t b = data[2];
+        BuitlInRGB_setColor(r, g, b);
+    }
     return 0;
 }
