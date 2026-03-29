@@ -98,7 +98,7 @@ void Ports_init()
     extSerial = new Lpf2ExtSerial(&extSerialGPIO);
     extSerial->init(PORT_D_ID_1, PORT_D_ID_2, PORT_D_TX_DISABLE);
     
-    portD_IO.init(extSerial, PORT_D_PWM_1, PORT_D_PWM_2);
+    portD_IO.init(extSerial, PORT_D_PWM_1, PORT_D_PWM_2, PORT_D_PWM_UNIT, PORT_D_PWM_TIMER, 1000);
 
     portA.init();
     portB.init();

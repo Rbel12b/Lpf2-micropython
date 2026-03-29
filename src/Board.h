@@ -64,7 +64,7 @@
 #define PORT_A_HWS 1
 #define PORT_B_HWS 2
 #define PORT_C_HWS 0
-#define PORT_D_HWS -1 // software
+#define PORT_D_HWS -1
 
 #define I2C_SDA 8
 #define I2C_SCL 42
