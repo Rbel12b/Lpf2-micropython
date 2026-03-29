@@ -177,6 +177,11 @@ public:
         timer_ = timer;
         freq_ = freq;
 
+        gpio_reset_pin((gpio_num_t)pin1_);
+        gpio_reset_pin((gpio_num_t)pin2_);
+        gpio_set_direction((gpio_num_t)pin1_, GPIO_MODE_INPUT);
+        gpio_set_direction((gpio_num_t)pin2_, GPIO_MODE_INPUT);
+
         // Attach GPIOs
         mcpwm_gpio_init(unit_, mcpwm_io_signals_t(MCPWM0A + timer_ * 2), pin1_);
         mcpwm_gpio_init(unit_, mcpwm_io_signals_t(MCPWM0B + timer_ * 2), pin2_);
@@ -189,6 +194,8 @@ public:
         cfg.duty_mode = MCPWM_DUTY_MODE_0;
 
         mcpwm_init(unit_, timer_, &cfg);
+
+        LPF2_LOG_D("Initialized PWM on pins %d (ch1) and %d (ch2) with frequency %u Hz, mcpwm unit: %i, timer: %i", pin1_, pin2_, freq_, unit_, timer_);
 
         return 0;
     }
@@ -204,6 +211,8 @@ public:
 
         mcpwm_set_duty_type(unit_, timer_, MCPWM_OPR_A, MCPWM_DUTY_MODE_0);
         mcpwm_set_duty_type(unit_, timer_, MCPWM_OPR_B, MCPWM_DUTY_MODE_0);
+
+        LPF2_LOG_D("PWM output set: ch1=%u (%.1f%%) -> pin: %i, ch2=%u (%.1f%%) -> pin: %i", ch1, dutyA, pin1_, ch2, dutyB, pin2_);
     }
 
 private:

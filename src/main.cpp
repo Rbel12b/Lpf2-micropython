@@ -43,7 +43,7 @@ void setup()
 {
     heap_caps_check_integrity_all(true);
     Serial.begin(981200);
-    lpf2_log_printf("Booted.");
+    lpf2_log_printf("Booted.\n");
 
     Lpf2::DeviceRegistry::registerDefault();
     Lpf2::DeviceDescRegistry::registerDefault();
@@ -53,7 +53,7 @@ void setup()
 
     gpio_set_pull_mode((gpio_num_t)I2C_SDA, GPIO_PULLUP_ONLY);
     gpio_set_pull_mode((gpio_num_t)I2C_SCL, GPIO_PULLUP_ONLY);
-    I2C_HW.begin(I2C_SDA, I2C_SCL, 100000);
+    I2C_HW.begin(I2C_SDA, I2C_SCL, 400000);
 
     Ports_init();
     IMU_init(I2C_HW);
