@@ -50,3 +50,8 @@ The i2c port is a standard 4-pin header, with the following pinout:
 The software is still in the early stages of development, but the plan is to have a microPython library that allows controlling the hub and its ports, as well as emulating the official hub for compatibility with the official app.
 
 Currently, the code is just for testing features, and the core library is separated in a different repo: [https://github.com/Rbel12b/Lpf2](https://github.com/Rbel12b/Lpf2)
+
+## License
+
+Copyright (C) 2026 Rbel12b
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
