@@ -15,22 +15,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *  */
 
-#include "BuiltInRGB.h"
-#include "Board.h"
-#include "Arduino.h"
-#include "FastLED.h"
+#pragma once
+#ifndef _BUILTINRGB_H_
+#define _BUILTINRGB_H_
 
-#define NUM_LEDS 1
+#include <cstdint>
 
-CRGB leds[NUM_LEDS];
+void BuiltInRGB_init();
+void BuiltInRGB_setColor(uint8_t r, uint8_t g, uint8_t b);
 
-void BuitlInRGB_init()
-{
-    FastLED.addLeds<NEOPIXEL, HUB_LED_PIN>(leds, NUM_LEDS); 
-}
-
-void BuitlInRGB_setColor(uint8_t r, uint8_t g, uint8_t b)
-{
-    leds[0].setRGB(r, g, b);
-    FastLED.show();
-}
+#endif

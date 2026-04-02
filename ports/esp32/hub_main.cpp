@@ -15,14 +15,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *  */
 
-#include "config.h"
+#include "Lpf2/config.hpp"
 #include <Arduino.h>
 
 #include "Board.h"
 #include "BuiltInRGB.h"
 #include "Ports.h"
 #include "Utils.h"
-#include "IMU.h"
 #include "ExtSerialGPIO.h"
 
 #include "Lpf2/HubEmulation.hpp"
@@ -31,6 +30,16 @@
 #include "Lpf2/Virtual/Device.hpp"
 #include "Lpf2/DeviceDescLib.hpp"
 #include "Lpf2/Devices/ColorSensor.hpp"
+
+void hub_main_task(void *pvParameter)
+{
+    setup();
+
+    while (true)
+    {
+        loop();
+    }
+}
 
 Lpf2::HubEmulation vHub("Technic Hub", Lpf2::HubType::CONTROL_PLUS_HUB);
 
@@ -48,15 +57,14 @@ void setup()
     Lpf2::DeviceRegistry::registerDefault();
     Lpf2::DeviceDescRegistry::registerDefault();
 
-    BuitlInRGB_init();
-    BuitlInRGB_setColor(0, 0, 0);
+    BuiltInRGB_init();
+    BuiltInRGB_setColor(0, 0, 0);
 
     gpio_set_pull_mode((gpio_num_t)I2C_SDA, GPIO_PULLUP_ONLY);
     gpio_set_pull_mode((gpio_num_t)I2C_SCL, GPIO_PULLUP_ONLY);
     I2C_HW.begin(I2C_SDA, I2C_SCL, 400000);
 
     Ports_init();
-    IMU_init(I2C_HW);
 
     vLED.setWriteDataCallback(vLEDWriteCallback);
     vLEDPort.attachDevice(&vLED);
@@ -89,7 +97,6 @@ void loop()
     }
 
     Ports_update();
-    IMU_update();
 
     vHub.update();
 
@@ -102,11 +109,11 @@ void loop()
             lastBlinkstate = !lastBlinkstate;
             if (lastBlinkstate)
             {
-                BuitlInRGB_setColor(50, 50, 50);
+                BuiltInRGB_setColor(50, 50, 50);
             }
             else
             {
-                BuitlInRGB_setColor(0, 0, 0);
+                BuiltInRGB_setColor(0, 0, 0);
             }
         }
     }
@@ -120,41 +127,41 @@ int vLEDWriteCallback(uint8_t mode, const std::vector<uint8_t> &data, void* user
         switch (color)
         {
             case Lpf2::ColorIDX::BLACK:
-                BuitlInRGB_setColor(0, 0, 0);
+                BuiltInRGB_setColor(0, 0, 0);
                 break;
             case Lpf2::ColorIDX::BLUE:
-                BuitlInRGB_setColor(0, 0, 50);
+                BuiltInRGB_setColor(0, 0, 50);
                 break;
             case Lpf2::ColorIDX::GREEN:
-                BuitlInRGB_setColor(0, 50, 0);
+                BuiltInRGB_setColor(0, 50, 0);
                 break;
             case Lpf2::ColorIDX::RED:
-                BuitlInRGB_setColor(50, 0, 0);
+                BuiltInRGB_setColor(50, 0, 0);
                 break;
             case Lpf2::ColorIDX::WHITE:
-                BuitlInRGB_setColor(50, 50, 50);
+                BuiltInRGB_setColor(50, 50, 50);
                 break;
             case Lpf2::ColorIDX::YELLOW:
-                BuitlInRGB_setColor(50, 50, 0);
+                BuiltInRGB_setColor(50, 50, 0);
                 break;
             case Lpf2::ColorIDX::ORANGE:
-                BuitlInRGB_setColor(50, 20, 0);
+                BuiltInRGB_setColor(50, 20, 0);
                 break;
             case Lpf2::ColorIDX::PURPLE:
-                BuitlInRGB_setColor(30, 0, 30);
+                BuiltInRGB_setColor(30, 0, 30);
                 break;
             case Lpf2::ColorIDX::PINK:
-                BuitlInRGB_setColor(50, 0, 20);
+                BuiltInRGB_setColor(50, 0, 20);
                 break;
             case Lpf2::ColorIDX::LIGHTBLUE:
-                BuitlInRGB_setColor(0, 20, 50);
+                BuiltInRGB_setColor(0, 20, 50);
                 break;
             case Lpf2::ColorIDX::CYAN:
-                BuitlInRGB_setColor(0, 50, 50);
+                BuiltInRGB_setColor(0, 50, 50);
                 break;
 
             default:
-                BuitlInRGB_setColor(0, 0, 0);
+                BuiltInRGB_setColor(0, 0, 0);
                 break;
         }
     }
@@ -163,7 +170,7 @@ int vLEDWriteCallback(uint8_t mode, const std::vector<uint8_t> &data, void* user
         uint8_t r = data[0];
         uint8_t g = data[1];
         uint8_t b = data[2];
-        BuitlInRGB_setColor(r, g, b);
+        BuiltInRGB_setColor(r, g, b);
     }
     return 0;
 }

@@ -1,0 +1,8 @@
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_CACHE_WORKAROUND=y
+CONFIG_SPIRAM_IGNORE_NOTFOUND=y
+CONFIG_SPIRAM_USE_MALLOC=y
+
+# Workaround for bug in IDFv5.5-v5.5.1
+# See https://github.com/espressif/esp-idf/issues/17436#issuecomment-3197206868
+CONFIG_NEWLIB_NANO_FORMAT=n

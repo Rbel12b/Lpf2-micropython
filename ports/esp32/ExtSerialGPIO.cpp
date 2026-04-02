@@ -18,8 +18,9 @@
 #include "ExtSerialGPIO.h"
 
 ExtSerialGPIO::ExtSerialGPIO(TwoWire &WirePort, uint32_t crystal_freq, uint8_t sc16is750_addr)
-    : m_WirePort(WirePort), crystal_freq(crystal_freq),
-    sc(m_WirePort, SC16IS750_PROTOCOL_I2C, sc16is750_addr)
+    : m_WirePort(WirePort),
+    sc(m_WirePort, SC16IS750_PROTOCOL_I2C, sc16is750_addr),
+    crystal_freq(crystal_freq)
 {
 }
 
