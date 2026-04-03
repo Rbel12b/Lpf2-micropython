@@ -17,7 +17,6 @@
 
 #include "BuiltInRGB.h"
 #include "Board.h"
-#include "Arduino.h"
 #include "led_strip.h"
 #include "driver/rmt_tx.h"
 #include "esp_err.h"

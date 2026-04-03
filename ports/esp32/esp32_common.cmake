@@ -148,7 +148,6 @@ list(APPEND MICROPY_SOURCE_PORT
 list(TRANSFORM MICROPY_SOURCE_PORT PREPEND ${MICROPY_PORT_DIR}/)
 
 file(GLOB MAIN_SOURCES "${CMAKE_CURRENT_LIST_DIR}/*.cpp")
-message("main sources: ${MAIN_SOURCES}")
 file(GLOB MAIN_LIB_SOURCES "${CMAKE_CURRENT_LIST_DIR}/../../lib/UART_Bridge/*.cpp")
 
 set(MAIN_LIB_INC "${CMAKE_CURRENT_LIST_DIR}/../../lib/UART_Bridge")
@@ -279,9 +278,7 @@ target_compile_definitions(${MICROPY_TARGET} PUBLIC
     CORE_DEBUG_LEVEL=0
     ARDUINO_USB_CDC_ON_BOOT=1
     ARDUINO_USB_MODE=1
-    USE_ARDUINO_USB_CDC=1
     CONFIG_ARDUHAL_LOG_COLORS=1
-    LPF2_LOG_LEVEL=4
 )
 
 # Disable some warnings to keep the build output clean.

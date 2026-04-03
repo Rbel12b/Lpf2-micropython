@@ -104,8 +104,6 @@ static time_t platform_mbedtls_time(time_t *timer) {
 
 } // extern "C"
 
-#include "Arduino.h"
-
 void mp_task(void *pvParameter) {
     volatile uint32_t sp = (uint32_t)esp_cpu_get_sp();
     #if MICROPY_PY_THREAD
@@ -287,13 +285,12 @@ void MICROPY_ESP_IDF_ENTRY(void) {
     // This defaults to initialising NVS and detecting the flash size.
     MICROPY_BOARD_STARTUP();
 
-    initArduino();
-
     // Create and transfer control to the MicroPython task.
-    xTaskCreatePinnedToCore(mp_task, "mp_task", MICROPY_TASK_STACK_SIZE / sizeof(StackType_t), NULL, MP_TASK_PRIORITY, &mp_main_task_handle, MP_TASK_COREID);
+    // xTaskCreatePinnedToCore(mp_task, "mp_task", MICROPY_TASK_STACK_SIZE / sizeof(StackType_t), NULL, MP_TASK_PRIORITY, &mp_main_task_handle, MP_TASK_COREID);
 
     // Task for the ports and hub emulation (if enabled).
-    xTaskCreatePinnedToCore(hub_main_task, "hub_main_task", MICROPY_TASK_STACK_SIZE / sizeof(StackType_t), NULL, ESP_TASK_PRIO_MIN + 5, &mp_main_task_handle, 0);
+    xTaskCreatePinnedToCore(hub_main_task, "hub_main_task", 8192, NULL, 5, NULL, 0);
+    // hub_main_task(NULL);
 }
 
 MP_WEAK void nlr_jump_fail(void *val) {

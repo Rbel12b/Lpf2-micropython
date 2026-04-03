@@ -20,8 +20,6 @@
 #include "Lpf2/Local/IO/UART.hpp"
 #include "Lpf2/Local/IO/IO.hpp"
 
-#ifdef ESP32
-
 #include <Arduino.h>
 #include <HardwareSerial.h>
 
@@ -78,21 +76,43 @@ public:
 
     size_t write(const uint8_t *data, size_t length) override
     {
+        if (data == nullptr || length == 0)
+        {
+            return 0;
+        }
+        if (m_uartPinState)
+        {
+            LPF2_LOG_W("Attempted to write data while UART pins are in high impedance state. Write operation ignored.");
+            return 0;
+        }
         return serial_.write(data, length);
     }
 
     int read() override
     {
+        if (m_uartPinState)
+        {
+            return -1;
+        }
         return serial_.read();
     }
 
     int available() override
     {
+        if (m_uartPinState)
+        {
+            LPF2_LOG_W("Attempted to read data while UART pins are in high impedance state. No data available.");
+            return 0;
+        }
         return serial_.available();
     }
 
     void flush() override
     {
+        if (m_uartPinState)
+        {
+            return;
+        }
         serial_.flush();
     }
 
@@ -102,8 +122,8 @@ public:
 
         if (highZ)
         {
-            // Detach UART pins → high impedance
             serial_.end();
+            // Detach UART pins → high impedance
             if (id2_pin_ >= 0)
                 pinMode(id2_pin_, INPUT);
             if (id1_pin_ >= 0)
@@ -118,10 +138,12 @@ public:
                     pinMode(id2_pin_, INPUT);
                 if (id1_pin_ >= 0)
                     pinMode(id1_pin_, INPUT);
-                serial_.end();
                 serial_.begin(baud_, config_, id2_pin_, id1_pin_);
             }
         }
+
+        m_uartPinState = highZ;
+        LPF2_LOG_D("Successfully set uart pins state to: highZ=%s", highZ ? "true" : "false");
     }
 
     float readCh(uint8_t ch) override
@@ -156,6 +178,8 @@ private:
 
     uint32_t baud_ = 115200;
     uint32_t config_ = SERIAL_8N1;
+
+    bool m_uartPinState = true; // true = high impedance (off), false = active (on)
 };
 
 #include "driver/mcpwm.h"
@@ -275,5 +299,3 @@ private:
     Esp32s3MotorPWM m_pwm;
     bool m_inited = false;
 };
-
-#endif // ESP32

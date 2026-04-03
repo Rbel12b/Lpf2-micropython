@@ -19,8 +19,9 @@
 #ifndef _PORTS_H_
 #define _PORTS_H_
 
+#include "Arduino.h"
 #include "Lpf2/DeviceManager.hpp"
-#include "Devices/esp32s3/device.h"
+#include "ESP32S3_IO.h"
 #include "Lpf2/HubEmulation.hpp"
 #include "Lpf2/Local/Port.hpp"
 

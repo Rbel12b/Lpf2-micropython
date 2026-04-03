@@ -21,7 +21,7 @@
 #include "Lpf2/Local/IO/IO.hpp"
 #include "Wire.h"
 #include "SC16IS750.h"
-#include "Devices/esp32s3/device.h"
+#include "ESP32S3_IO.h"
 
 class ExtSerialGPIO;
 

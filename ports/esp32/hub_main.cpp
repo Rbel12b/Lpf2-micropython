@@ -15,8 +15,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *  */
 
-#include "Lpf2/config.hpp"
 #include <Arduino.h>
+
+#include "Lpf2/config.hpp"
 
 #include "Board.h"
 #include "BuiltInRGB.h"
@@ -31,8 +32,20 @@
 #include "Lpf2/DeviceDescLib.hpp"
 #include "Lpf2/Devices/ColorSensor.hpp"
 
+void setup();
+void loop();
+
+extern "C" {
+extern bool _btLibraryInUse;
+}
+
 void hub_main_task(void *pvParameter)
 {
+    _btLibraryInUse = true;
+    initArduino();
+    // NimBLEDevice::deinit();
+    // esp_bt_controller_disable();
+    // esp_bt_controller_deinit();
     setup();
 
     while (true)
@@ -51,7 +64,8 @@ int vLEDWriteCallback(uint8_t mode, const std::vector<uint8_t> &data, void* user
 void setup()
 {
     heap_caps_check_integrity_all(true);
-    Serial.begin(981200);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    lpf2_log_init();
     lpf2_log_printf("Booted.\n");
 
     Lpf2::DeviceRegistry::registerDefault();
@@ -87,14 +101,6 @@ bool lastBlinkstate = false;
 void loop()
 {
     vTaskDelay(1);
-    
-    if (Serial.available()) {
-        uint8_t c = Serial.read();
-        if (c == 0x03) {
-            // Ctrl+C received
-            ESP.restart();
-        }
-    }
 
     Ports_update();
 
