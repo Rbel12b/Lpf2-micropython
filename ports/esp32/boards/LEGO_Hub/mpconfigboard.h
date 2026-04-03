@@ -1,3 +1,5 @@
+#include "Board.h"
+
 #ifndef MICROPY_HW_BOARD_NAME
 // Can be set by mpconfigboard.cmake.
 #define MICROPY_HW_BOARD_NAME               "ESP32S3 LEGO Hub"
@@ -9,5 +11,5 @@
 // #define MICROPY_HW_USB_CDC                  (0)
 // #define MICROPY_HW_ESP_USB_SERIAL_JTAG      (1)
 
-#define MICROPY_HW_I2C0_SCL                 (42)
-#define MICROPY_HW_I2C0_SDA                 (8)
+#define MICROPY_HW_I2C0_SCL                 I2C_SCL
+#define MICROPY_HW_I2C0_SDA                 I2C_SDA

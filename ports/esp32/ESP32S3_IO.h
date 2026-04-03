@@ -1,6 +1,6 @@
 /**
  *  Copyright (C) 2026 - Rbel12b
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
  *  published by the Free Software Foundation, either version 3 of the
@@ -29,11 +29,15 @@ class Esp32s3MotorPWM;
 using Lpf2UartPort = Esp32s3Uart;
 using Lpf2PwmPort = Esp32s3MotorPWM;
 
+#include "driver/uart.h"
+#include "driver/gpio.h"
+#include "esp_err.h"
+
 class Esp32s3Uart : public Lpf2::Local::Uart
 {
 public:
-    explicit Esp32s3Uart(int uart_num)
-        : serial_(uart_num)
+    explicit Esp32s3Uart(uart_port_t uart_num)
+        : uart_num_(uart_num)
     {
     }
 
@@ -42,122 +46,119 @@ public:
                int id1_pin = -1,
                int id2_pin = -1)
     {
-        id1_pin_ = id1_pin;
-        id2_pin_ = id2_pin;
-        config_ = config;
         baud_ = baudrate;
+        config_ = config;
+        id1_pin_ = id1_pin; // TX
+        id2_pin_ = id2_pin; // RX
 
-        // Configure ADC pins if provided
-        if (id1_pin_ >= 0)
-        {
-            pinMode(id1_pin_, INPUT);
-        }
-        if (id2_pin_ >= 0)
-        {
-            pinMode(id2_pin_, INPUT);
-        }
+        // ADC mode by default
+        setPinsToAnalog();
 
-        uartPinsOff();
-
+        m_uartActive = false;
         return true;
     }
 
     void end() override
     {
-        serial_.end();
-        uartPinsOff();
+        if (m_uartActive)
+        {
+            uart_driver_delete(uart_num_);
+            m_uartActive = false;
+        }
+        setPinsToAnalog();
     }
 
     void setBaudrate(uint32_t baudrate) override
     {
         baud_ = baudrate;
-        serial_.updateBaudRate(baudrate);
+
+        if (m_uartActive)
+        {
+            uart_set_baudrate(uart_num_, baudrate);
+            LPF2_LOG_D("Baudrate set to %u", baudrate);
+        }
+        else
+        {
+            LPF2_LOG_W("Baudrate set to %u (UART not active, will take effect when UART is enabled)", baudrate);
+        }
     }
 
     size_t write(const uint8_t *data, size_t length) override
     {
-        if (data == nullptr || length == 0)
+        if (!m_uartActive || !data || length == 0)
         {
+            LPF2_LOG_W("Attempted to write to UART while inactive or with invalid data/length");
             return 0;
         }
-        if (m_uartPinState)
-        {
-            LPF2_LOG_W("Attempted to write data while UART pins are in high impedance state. Write operation ignored.");
-            return 0;
-        }
-        return serial_.write(data, length);
+
+        int written = uart_write_bytes(uart_num_, (const char *)data, length);
+        return written < 0 ? 0 : written;
     }
 
     int read() override
     {
-        if (m_uartPinState)
-        {
+        if (!m_uartActive)
             return -1;
-        }
-        return serial_.read();
+
+        uint8_t byte;
+        int len = uart_read_bytes(uart_num_, &byte, 1, 0);
+        return (len == 1) ? byte : -1;
+    }
+
+    size_t read(const uint8_t *data, size_t length) override
+    {
+        if (!m_uartActive || !data || length == 0)
+            return 0;
+
+        int len = uart_read_bytes(uart_num_, (void *)data, length, 0);
+        return len < 0 ? 0 : len;
     }
 
     int available() override
     {
-        if (m_uartPinState)
-        {
-            LPF2_LOG_W("Attempted to read data while UART pins are in high impedance state. No data available.");
+        if (!m_uartActive)
             return 0;
-        }
-        return serial_.available();
+
+        size_t buffered = 0;
+        uart_get_buffered_data_len(uart_num_, &buffered);
+        return buffered;
     }
 
     void flush() override
     {
-        if (m_uartPinState)
-        {
+        if (!m_uartActive)
             return;
-        }
-        serial_.flush();
+
+        uart_flush(uart_num_);
     }
 
     void setUartPinsState(bool highZ) override
     {
         LPF2_LOG_D("Setting uart pins state: highZ=%s", highZ ? "true" : "false");
-
         if (highZ)
         {
-            serial_.end();
-            // Detach UART pins → high impedance
-            if (id2_pin_ >= 0)
-                pinMode(id2_pin_, INPUT);
-            if (id1_pin_ >= 0)
-                pinMode(id1_pin_, INPUT);
+            // Switch to ADC mode
+            if (m_uartActive)
+            {
+                uart_flush(uart_num_);
+                uart_wait_tx_done(uart_num_, pdMS_TO_TICKS(100));
+                uart_driver_delete(uart_num_);
+                m_uartActive = false;
+            }
+
+            setPinsToAnalog();
         }
         else
         {
-            // Reattach UART pins
-            if (id2_pin_ >= 0 || id1_pin_ >= 0)
-            {
-                if (id2_pin_ >= 0)
-                    pinMode(id2_pin_, INPUT);
-                if (id1_pin_ >= 0)
-                    pinMode(id1_pin_, INPUT);
-                serial_.begin(baud_, config_, id2_pin_, id1_pin_);
-            }
+            // Switch to UART mode
+            initUart();
+            m_uartActive = true;
         }
-
-        m_uartPinState = highZ;
-        LPF2_LOG_D("Successfully set uart pins state to: highZ=%s", highZ ? "true" : "false");
     }
 
     float readCh(uint8_t ch) override
     {
-        int pin = -1;
-
-        if (ch == 0)
-        {
-            pin = id1_pin_;
-        }
-        else
-        {
-            pin = id2_pin_;
-        }
+        int pin = (ch == 0) ? id1_pin_ : id2_pin_;
 
         if (pin < 0)
         {
@@ -171,15 +172,61 @@ public:
     }
 
 private:
-    HardwareSerial serial_;
+    void initUart()
+    {
+        gpio_set_direction((gpio_num_t)id1_pin_, GPIO_MODE_OUTPUT);
+        gpio_set_drive_capability((gpio_num_t)id1_pin_, GPIO_DRIVE_CAP_DEFAULT);
+        gpio_set_level((gpio_num_t)id1_pin_, 1);
+        ets_delay_us(50);
 
-    int id1_pin_ = -1;
-    int id2_pin_ = -1;
+        uart_config_t uart_config = {};
+        uart_config.baud_rate = baud_;
+        uart_config.data_bits = UART_DATA_8_BITS;
+        uart_config.parity = UART_PARITY_DISABLE;
+        uart_config.stop_bits = UART_STOP_BITS_1;
+        uart_config.flow_ctrl = UART_HW_FLOWCTRL_DISABLE;
+        uart_config.source_clk = UART_SCLK_DEFAULT;
+
+        uart_param_config(uart_num_, &uart_config);
+
+        uart_driver_install(uart_num_, 1024, 0, 0, NULL, 0);
+
+        uart_set_pin(uart_num_,
+                     id1_pin_,
+                     id2_pin_,
+                     UART_PIN_NO_CHANGE,
+                     UART_PIN_NO_CHANGE);
+
+        uart_flush(uart_num_);
+
+        vTaskDelay(pdMS_TO_TICKS(20));
+    }
+
+    void setPinsToAnalog()
+    {
+        if (id1_pin_ >= 0)
+        {
+            pinMode(id1_pin_, INPUT);
+            gpio_reset_pin((gpio_num_t)id2_pin_);
+        }
+
+        if (id2_pin_ >= 0)
+        {
+            pinMode(id2_pin_, INPUT);
+            gpio_reset_pin((gpio_num_t)id2_pin_);
+        }
+    }
+
+private:
+    uart_port_t uart_num_;
+
+    int id1_pin_ = -1; // TX
+    int id2_pin_ = -1; // RX
 
     uint32_t baud_ = 115200;
     uint32_t config_ = SERIAL_8N1;
 
-    bool m_uartPinState = true; // true = high impedance (off), false = active (on)
+    bool m_uartActive = false;
 };
 
 #include "driver/mcpwm.h"
@@ -250,7 +297,7 @@ private:
 class Esp32s3IO : public Lpf2::Local::IO
 {
 public:
-    Esp32s3IO(int uartNum) : m_uart(uartNum) {}
+    Esp32s3IO(int uartNum) : m_uart((uart_port_t)uartNum) {}
 
     Lpf2::Local::PWM *getPWM() override
     {

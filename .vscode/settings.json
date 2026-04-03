@@ -1,5 +1,5 @@
 {
-    "idf.currentSetup": "/home/abel/.espressif/v5.5.1/esp-idf",
+    "idf.currentSetup": "~/.espressif/v5.5.1/esp-idf",
     "C_Cpp.default.compilerPath": "",
-    "cmake.sourceDirectory": "/home/abel/Documents/PlatformIO/Projects/esp32s3_LEGO_Hub/ports/esp32/main"
+    "cmake.sourceDirectory": "${workspaceFolder}/ports/esp32"
 }

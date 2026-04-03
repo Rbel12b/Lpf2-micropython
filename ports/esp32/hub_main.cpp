@@ -67,7 +67,6 @@ void setup()
     vTaskDelay(500 / portTICK_PERIOD_MS);
     lpf2_log_init();
     lpf2_log_printf("Booted.\n");
-
     Lpf2::DeviceRegistry::registerDefault();
     Lpf2::DeviceDescRegistry::registerDefault();
 
@@ -103,6 +102,8 @@ void loop()
     vTaskDelay(1);
 
     Ports_update();
+    // uint8_t b = 0x01;
+    // uart_write_bytes(UART_NUM_2, &b, 1);
 
     vHub.update();
 
