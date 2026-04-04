@@ -72,15 +72,20 @@ public:
     {
         baud_ = baudrate;
 
-        if (m_uartActive)
-        {
-            uart_set_baudrate(uart_num_, baudrate);
-            LPF2_LOG_D("Baudrate set to %u", baudrate);
-        }
-        else
+        if (!m_uartActive)
         {
             LPF2_LOG_W("Baudrate set to %u (UART not active, will take effect when UART is enabled)", baudrate);
+            return;
         }
+
+        uart_wait_tx_done(uart_num_, pdMS_TO_TICKS(100));
+        uart_flush(uart_num_);
+        uart_set_baudrate(uart_num_, baudrate);
+        uart_flush(uart_num_);
+
+        vTaskDelay(pdMS_TO_TICKS(10));
+
+        LPF2_LOG_D("Baudrate set to %u", baudrate);
     }
 
     size_t write(const uint8_t *data, size_t length) override
