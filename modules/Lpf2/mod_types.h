@@ -1,4 +1,6 @@
+extern "C" {
 #include "py/runtime.h"
+}
 
 #define GET_SELF() ((SELF_TYPE*)(MP_OBJ_TO_PTR(self_in)))
 #define GET_SELF_CPP() (GET_SELF()->cpp_obj)
