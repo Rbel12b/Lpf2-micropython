@@ -76,4 +76,22 @@
 // The SC16IS750's pin used to disable TX outputs when the port is in UART mode. Connected to the #OE pin of the TX output buffer.
 #define PORT_D_TX_DISABLE 2
 
+#define SD_MODE 1
+
+#define SD_SLOT 2
+#define SD_SCK  41
+#define SD_MISO 44
+#define SD_MOSI 43
+#define SD_CS   38
+
+// #define SD_MODE 2
+// #define SD_SLOT 0
+// #define SD_WIDTH 4
+// #define SD_CLK 8
+// #define SD_CMD 9
+// #define SD_D0 10
+// #define SD_D1 11
+// #define SD_D2 12
+// #define SD_D3 13
+
 #endif
