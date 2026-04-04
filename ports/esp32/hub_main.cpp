@@ -43,9 +43,9 @@ void hub_main_task(void *pvParameter)
 {
     _btLibraryInUse = true;
     initArduino();
-    // NimBLEDevice::deinit();
-    // esp_bt_controller_disable();
-    // esp_bt_controller_deinit();
+
+    vTaskDelay(200 / portTICK_PERIOD_MS); // Wait for the main task to start and do its initializations
+
     setup();
 
     while (true)
@@ -64,8 +64,6 @@ int vLEDWriteCallback(uint8_t mode, const std::vector<uint8_t> &data, void* user
 void setup()
 {
     heap_caps_check_integrity_all(true);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-    lpf2_log_init();
     lpf2_log_printf("Booted.\n");
     Lpf2::DeviceRegistry::registerDefault();
     Lpf2::DeviceDescRegistry::registerDefault();

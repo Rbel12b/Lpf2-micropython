@@ -52,7 +52,9 @@ extern "C" {
 #include "py/repl.h"
 #include "py/gc.h"
 #include "py/mphal.h"
+#include "py/obj.h"
 #include "extmod/modmachine.h"
+#include "extmod/vfs.h"
 #include "shared/readline/readline.h"
 #include "shared/runtime/pyexec.h"
 #include "shared/timeutils/timeutils.h"
@@ -101,6 +103,66 @@ static time_t platform_mbedtls_time(time_t *timer) {
     return tv.tv_sec + TIMEUTILS_SECONDS_1970_TO_2000;
 }
 #endif
+
+void port_init(void) {
+#if defined(SD_MODE)
+#if SD_MODE == 1
+
+    mp_obj_t sd_args[] = {
+        MP_OBJ_NEW_QSTR(MP_QSTR_slot), MP_OBJ_NEW_SMALL_INT(SD_SLOT),
+        MP_OBJ_NEW_QSTR(MP_QSTR_sck),  MP_OBJ_NEW_SMALL_INT(SD_SCK),
+        MP_OBJ_NEW_QSTR(MP_QSTR_miso), MP_OBJ_NEW_SMALL_INT(SD_MISO),
+        MP_OBJ_NEW_QSTR(MP_QSTR_mosi), MP_OBJ_NEW_SMALL_INT(SD_MOSI),
+        MP_OBJ_NEW_QSTR(MP_QSTR_cs),   MP_OBJ_NEW_SMALL_INT(SD_CS),
+    };
+
+#elif SD_MODE == 2
+
+    #if SD_WIDTH == 0 || SD_WIDTH > 4 || SD_WIDTH == 3
+    #error "Invalid SD_WIDTH value"
+    #endif
+
+    mp_obj_t data_tuple[] = {
+        MP_OBJ_NEW_SMALL_INT(SD_D0),
+    #if SD_WIDTH >= 2
+        MP_OBJ_NEW_SMALL_INT(SD_D1),
+    #endif
+    #if SD_WIDTH >= 4
+        MP_OBJ_NEW_SMALL_INT(SD_D2),
+        MP_OBJ_NEW_SMALL_INT(SD_D3),
+    #endif
+    };
+
+    mp_obj_t sd_args[] = {
+        MP_OBJ_NEW_QSTR(MP_QSTR_slot), MP_OBJ_NEW_SMALL_INT(SD_SLOT),
+        MP_OBJ_NEW_QSTR(MP_QSTR_width), MP_OBJ_NEW_SMALL_INT(SD_WIDTH),
+        MP_OBJ_NEW_QSTR(MP_QSTR_sck),   MP_OBJ_NEW_SMALL_INT(SD_CLK),
+        MP_OBJ_NEW_QSTR(MP_QSTR_cmd),   MP_OBJ_NEW_SMALL_INT(SD_CMD),
+        MP_OBJ_NEW_QSTR(MP_QSTR_data),  mp_obj_new_tuple(SD_WIDTH, data_tuple),
+    };
+
+#endif // SD_MODE
+
+    mp_obj_t sdcard = MP_OBJ_TYPE_GET_SLOT(
+        &machine_sdcard_type,
+        make_new
+    )(
+        &machine_sdcard_type,
+        0, 5, sd_args
+    );
+
+    // Mount directly (auto-detect FAT)
+    mp_obj_t args[2] = {
+        sdcard,
+        MP_OBJ_NEW_QSTR(MP_QSTR__slash_)
+    };
+
+    mp_vfs_mount(2, args, NULL);
+
+    // Set cwd
+    mp_vfs_chdir(MP_OBJ_NEW_QSTR(MP_QSTR__slash_));
+#endif
+}
 
 } // extern "C"
 
@@ -286,7 +348,7 @@ void MICROPY_ESP_IDF_ENTRY(void) {
     MICROPY_BOARD_STARTUP();
 
     // Create and transfer control to the MicroPython task.
-    // xTaskCreatePinnedToCore(mp_task, "mp_task", MICROPY_TASK_STACK_SIZE / sizeof(StackType_t), NULL, MP_TASK_PRIORITY, &mp_main_task_handle, MP_TASK_COREID);
+    xTaskCreatePinnedToCore(mp_task, "mp_task", MICROPY_TASK_STACK_SIZE / sizeof(StackType_t), NULL, MP_TASK_PRIORITY, &mp_main_task_handle, MP_TASK_COREID);
 
     // Task for the ports and hub emulation (if enabled).
     xTaskCreatePinnedToCore(hub_main_task, "hub_main_task", 8192, NULL, 5, NULL, 0);
