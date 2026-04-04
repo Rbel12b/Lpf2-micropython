@@ -4,7 +4,6 @@ extern "C" {
 
 #include "mod_types.h"
 #include "Port_tampoline.h"
-#include "mp_bridge.h"
 
 #define SELF_TYPE mp_obj_lpf2_port_t
 
@@ -27,20 +26,20 @@ static mp_obj_t lpf2_port_make_new(const mp_obj_type_t *type,
 
 static mp_obj_t lpf2_port_set_rgb_idx(mp_obj_t self_in, mp_obj_t idx_in)
 {
-    GET_SELF_CPP()->setRgbColorIdx((Lpf2::ColorIDX)mp_bridge_obj_get_int(idx_in));
+    GET_SELF_CPP()->setRgbColorIdx((Lpf2::ColorIDX)mp_obj_get_int(idx_in));
     return mp_const_none;
 }
 static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_port_set_rgb_idx_obj, lpf2_port_set_rgb_idx);
 
 static mp_obj_t lpf2_port_get_mode_count(mp_obj_t self_in)
 {
-    return mp_bridge_obj_new_int(GET_SELF_CPP()->getModeCount());
+    return mp_obj_new_int(GET_SELF_CPP()->getModeCount());
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_port_get_mode_count_obj, lpf2_port_get_mode_count);
 
 static mp_obj_t lpf2_port_get_device_type(mp_obj_t self_in)
 {
-    return mp_bridge_obj_new_int((int)GET_SELF_CPP()->getDeviceType());
+    return mp_obj_new_int((int)GET_SELF_CPP()->getDeviceType());
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_port_get_device_type_obj, lpf2_port_get_device_type);
 
@@ -54,7 +53,7 @@ static MP_DEFINE_CONST_DICT(lpf2_port_locals_dict, lpf2_port_locals_table);
 
 MP_DEFINE_CONST_OBJ_TYPE(
     lpf2_port_type, 
-    MP_QSTR_Port,
+    MP_QSTR_port,
     MP_TYPE_FLAG_NONE,
     make_new, (void*)lpf2_port_make_new,
     locals_dict, &lpf2_port_locals_dict
