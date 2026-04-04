@@ -32,6 +32,8 @@
 #include "Lpf2/DeviceDescLib.hpp"
 #include "Lpf2/Devices/ColorSensor.hpp"
 
+#include "mod_hub.h"
+
 void setup();
 void loop();
 
@@ -39,14 +41,16 @@ extern "C" {
 extern bool _btLibraryInUse;
 }
 
-void hub_main_task(void *pvParameter)
+void hub_init()
 {
     _btLibraryInUse = true;
     initArduino();
-
-    vTaskDelay(200 / portTICK_PERIOD_MS); // Wait for the main task to start and do its initializations
-
     setup();
+}
+
+void hub_main_task(void *pvParameter)
+{
+    vTaskDelay(200 / portTICK_PERIOD_MS); // Wait for the mp_task to start and do its initializations
 
     while (true)
     {
@@ -76,6 +80,8 @@ void setup()
     I2C_HW.begin(I2C_SDA, I2C_SCL, 400000);
 
     Ports_init();
+
+    mod_hub_ports_init();
 
     vLED.setWriteDataCallback(vLEDWriteCallback);
     vLEDPort.attachDevice(&vLED);

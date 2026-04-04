@@ -171,9 +171,6 @@ void mp_task(void *pvParameter) {
     #if MICROPY_PY_THREAD
     mp_thread_init(pxTaskGetStackStart(NULL), MICROPY_TASK_STACK_SIZE / sizeof(uintptr_t));
     #endif
-    #if MICROPY_HW_ESP_USB_SERIAL_JTAG
-    usb_serial_jtag_init();
-    #endif
     #if MICROPY_HW_ENABLE_USBDEV
     usb_phy_init();
     #endif
@@ -338,6 +335,7 @@ extern "C" void boardctrl_startup(void) {
     }
 }
 
+extern void hub_init();
 extern void hub_main_task(void *pvParameter);
 
 extern "C" {
@@ -346,13 +344,18 @@ void MICROPY_ESP_IDF_ENTRY(void) {
     // Hook for a board to run code at start up.
     // This defaults to initialising NVS and detecting the flash size.
     MICROPY_BOARD_STARTUP();
+    
+    #if MICROPY_HW_ESP_USB_SERIAL_JTAG
+    usb_serial_jtag_init();
+    #endif
+
+    hub_init();
 
     // Create and transfer control to the MicroPython task.
     xTaskCreatePinnedToCore(mp_task, "mp_task", MICROPY_TASK_STACK_SIZE / sizeof(StackType_t), NULL, MP_TASK_PRIORITY, &mp_main_task_handle, MP_TASK_COREID);
 
     // Task for the ports and hub emulation (if enabled).
     xTaskCreatePinnedToCore(hub_main_task, "hub_main_task", 8192, NULL, 5, NULL, 0);
-    // hub_main_task(NULL);
 }
 
 MP_WEAK void nlr_jump_fail(void *val) {
