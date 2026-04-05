@@ -121,7 +121,7 @@ public:
         return mp_obj_get_int(ret);
     }
 
-    bool deviceConnected() override
+    bool isDeviceConnected() override
     {
         mp_obj_t method = mp_load_attr(self, MP_QSTR_deviceConnected);
         mp_obj_t ret = mp_call_function_0(method);
