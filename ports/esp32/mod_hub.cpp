@@ -7,6 +7,8 @@ extern "C"
     // --- instances ---
     static mp_obj_lpf2_local_port_t port_A_obj;
     static mp_obj_lpf2_local_port_t port_B_obj;
+    static mp_obj_lpf2_local_port_t port_C_obj;
+    static mp_obj_lpf2_local_port_t port_D_obj;
 
     void mod_hub_ports_init()
     {
@@ -15,12 +17,20 @@ extern "C"
 
         port_B_obj.base.type = &lpf2_local_port_type;
         port_B_obj.cpp_obj = &portB;
+
+        port_C_obj.base.type = &lpf2_local_port_type;
+        port_C_obj.cpp_obj = &portC;
+
+        port_D_obj.base.type = &lpf2_local_port_type;
+        port_D_obj.cpp_obj = &portD;
     }
 
     // --- ports module ---
     static const mp_rom_map_elem_t ports_globals_table[] = {
         {MP_ROM_QSTR(MP_QSTR_A), MP_ROM_PTR(&port_A_obj)},
         {MP_ROM_QSTR(MP_QSTR_B), MP_ROM_PTR(&port_B_obj)},
+        {MP_ROM_QSTR(MP_QSTR_C), MP_ROM_PTR(&port_C_obj)},
+        {MP_ROM_QSTR(MP_QSTR_D), MP_ROM_PTR(&port_D_obj)},
     };
     static MP_DEFINE_CONST_DICT(ports_globals, ports_globals_table);
 
