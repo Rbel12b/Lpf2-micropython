@@ -1,5 +1,0 @@
-{
-    "idf.currentSetup": "~/.espressif/v5.5.1/esp-idf",
-    "C_Cpp.default.compilerPath": "",
-    "cmake.sourceDirectory": "${workspaceFolder}/ports/esp32"
-}
