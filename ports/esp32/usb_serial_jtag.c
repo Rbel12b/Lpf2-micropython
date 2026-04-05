@@ -73,7 +73,10 @@ void usb_serial_jtag_notif_callback(usj_select_notif_t notif, BaseType_t *task_w
 {
     if (notif == USJ_SELECT_READ_NOTIF) {
         usb_serial_jtag_handle_rx();
-        mp_hal_wake_main_task_from_isr();
+        if (mp_main_task_handle)
+        {
+            mp_hal_wake_main_task_from_isr();
+        }
     }
 };
 
