@@ -61,10 +61,35 @@ extern "C"
         .globals = (mp_obj_dict_t *)&log_globals,
     };
 
+    // --- board module ---
+
+    static const mp_rom_map_elem_t board_globals_table[] = {
+        { MP_ROM_QSTR(MP_QSTR_SD_MODE), MP_ROM_INT(SD_MODE) },
+        { MP_ROM_QSTR(MP_QSTR_SD_SLOT), MP_ROM_INT(SD_SLOT) },
+        { MP_ROM_QSTR(MP_QSTR_SD_CS), MP_ROM_INT(SD_CS) },
+        { MP_ROM_QSTR(MP_QSTR_SD_SCK), MP_ROM_INT(SD_SCK) },
+        { MP_ROM_QSTR(MP_QSTR_SD_MOSI), MP_ROM_INT(SD_MOSI) },
+        { MP_ROM_QSTR(MP_QSTR_SD_MISO), MP_ROM_INT(SD_MISO) },
+        { MP_ROM_QSTR(MP_QSTR_SD_WIDTH), MP_ROM_INT(SD_WIDTH) },
+        { MP_ROM_QSTR(MP_QSTR_SD_CLK), MP_ROM_INT(SD_CLK) },
+        { MP_ROM_QSTR(MP_QSTR_SD_CMD), MP_ROM_INT(SD_CMD) },
+        { MP_ROM_QSTR(MP_QSTR_SD_D0), MP_ROM_INT(SD_D0) },
+        { MP_ROM_QSTR(MP_QSTR_SD_D1), MP_ROM_INT(SD_D1) },
+        { MP_ROM_QSTR(MP_QSTR_SD_D2), MP_ROM_INT(SD_D2) },
+        { MP_ROM_QSTR(MP_QSTR_SD_D3), MP_ROM_INT(SD_D3) },
+    };
+    static MP_DEFINE_CONST_DICT(board_globals, board_globals_table);
+
+    const mp_obj_module_t hub_board_module = {
+        .base = {&mp_type_module},
+        .globals = (mp_obj_dict_t *)&board_globals,
+    };
+
     // --- hub module ---
     static const mp_rom_map_elem_t hub_globals_table[] = {
         {MP_ROM_QSTR(MP_QSTR_ports), MP_ROM_PTR(&hub_ports_module)},
         {MP_ROM_QSTR(MP_QSTR_log), MP_ROM_PTR(&hub_log_module)},
+        {MP_ROM_QSTR(MP_QSTR_board), MP_ROM_PTR(&hub_board_module)},
     };
     static MP_DEFINE_CONST_DICT(hub_globals, hub_globals_table);
 
