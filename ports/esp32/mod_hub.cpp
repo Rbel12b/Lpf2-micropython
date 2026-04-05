@@ -8,10 +8,10 @@ extern "C" {
 extern "C"
 {
     // --- instances ---
-    static mp_obj_lpf2_local_port_t port_A_obj;
-    static mp_obj_lpf2_local_port_t port_B_obj;
-    static mp_obj_lpf2_local_port_t port_C_obj;
-    static mp_obj_lpf2_local_port_t port_D_obj;
+    static mp_obj_lpf2_port_t port_A_obj;
+    static mp_obj_lpf2_port_t port_B_obj;
+    static mp_obj_lpf2_port_t port_C_obj;
+    static mp_obj_lpf2_port_t port_D_obj;
 
     void mod_hub_ports_init()
     {

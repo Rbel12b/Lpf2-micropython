@@ -13,15 +13,10 @@ extern "C" {
 typedef struct _mp_obj_lpf2_port_t
 {
     mp_obj_base_t base;
-    Lpf2::Port *cpp_obj;
-    bool is_trampoline;
+    Lpf2::Port *cpp_obj = nullptr;
+    bool is_trampoline = false;
 } mp_obj_lpf2_port_t;
 extern const mp_obj_type_t lpf2_port_type;
-
-typedef struct _mp_obj_lpf2_local_port_t {
-    mp_obj_base_t base;
-    Lpf2::Local::Port* cpp_obj;
-} mp_obj_lpf2_local_port_t;
 extern const mp_obj_type_t lpf2_local_port_type;
 
 } // extern "C"
