@@ -1,3 +1,6 @@
+extern "C" {
+#include "py/runtime.h"
+}
 #include "Ports.h"
 #include "mod_types.h"
 #include "mod_hub.h"
@@ -39,9 +42,29 @@ extern "C"
         .globals = (mp_obj_dict_t *)&ports_globals,
     };
 
+    // --- log module ---
+    static mp_obj_t log_setLevel(mp_obj_t level)
+    {
+        lpf2_set_runtime_log_level(mp_obj_get_int(level));
+        return mp_const_none;
+    }
+
+    static MP_DEFINE_CONST_FUN_OBJ_1(log_setLevel_obj, log_setLevel);
+
+    static const mp_rom_map_elem_t log_globals_table[] = {
+        {MP_ROM_QSTR(MP_QSTR_setLevel), MP_ROM_PTR(&log_setLevel_obj)},
+    };
+    static MP_DEFINE_CONST_DICT(log_globals, log_globals_table);
+
+    const mp_obj_module_t hub_log_module = {
+        .base = {&mp_type_module},
+        .globals = (mp_obj_dict_t *)&log_globals,
+    };
+
     // --- hub module ---
     static const mp_rom_map_elem_t hub_globals_table[] = {
         {MP_ROM_QSTR(MP_QSTR_ports), MP_ROM_PTR(&hub_ports_module)},
+        {MP_ROM_QSTR(MP_QSTR_log), MP_ROM_PTR(&hub_log_module)},
     };
     static MP_DEFINE_CONST_DICT(hub_globals, hub_globals_table);
 
