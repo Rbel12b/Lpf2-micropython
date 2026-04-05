@@ -354,3 +354,5 @@ add_custom_command(
     VERBATIM
     COMMAND_EXPAND_LISTS
 )
+
+littlefs_create_partition_image(vfs ../fs FLASH_IN_PROJECT)

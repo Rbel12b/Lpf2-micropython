@@ -83,15 +83,12 @@
 #define SD_MISO 44
 #define SD_MOSI 43
 #define SD_CS   38
-
-// #define SD_MODE 2
-// #define SD_SLOT 0
-// #define SD_WIDTH 4
-// #define SD_CLK 8
-// #define SD_CMD 9
-// #define SD_D0 10
-// #define SD_D1 11
-// #define SD_D2 12
-// #define SD_D3 13
+#define SD_WIDTH 0
+#define SD_CLK -1
+#define SD_CMD -1
+#define SD_D0 -1
+#define SD_D1 -1
+#define SD_D2 -1
+#define SD_D3 -1
 
 #endif
