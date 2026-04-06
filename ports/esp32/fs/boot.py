@@ -1,4 +1,4 @@
-import hub,lpf2,machine,vfs,os
+import hub,machine,vfs,gc
 
 try:
     if hub.board.SD_MODE == 2:
@@ -14,3 +14,6 @@ try:
     print("SD card mounted at /sd")
 except Exception as e:
     print("Failed to mount SD card:", e)
+
+gc.enable()
+gc.threshold(4096)

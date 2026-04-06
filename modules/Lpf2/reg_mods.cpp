@@ -19,6 +19,7 @@ static const mp_rom_map_elem_t lpf2_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_lpf2) },
     { MP_ROM_QSTR(MP_QSTR_port), MP_ROM_PTR(&lpf2_port_type) },
     { MP_ROM_QSTR(MP_QSTR_local), MP_ROM_PTR(&lpf2_local_module) },
+    { MP_ROM_QSTR(MP_QSTR_mode), MP_ROM_PTR(&lpf2_mode_type) },
 };
 
 static MP_DEFINE_CONST_DICT(lpf2_globals, lpf2_globals_table);

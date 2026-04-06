@@ -14,24 +14,21 @@ static mp_obj_t lpf2_port_make_new(const mp_obj_type_t *type,
                                     const mp_obj_t *args)
 {
 
-    mp_obj_lpf2_port_t *o = m_new_obj(mp_obj_lpf2_port_t);
+    mp_obj_lpf2_port_t *o = (mp_obj_lpf2_port_t*)m_malloc_with_finaliser(sizeof(mp_obj_lpf2_port_t));
     o->base.type = type;
 
     o->cpp_obj = new PortTrampoline(MP_OBJ_FROM_PTR(o));
     o->is_trampoline = true;
+    o->owned = true;
 
     return MP_OBJ_FROM_PTR(o);
 }
 
-#define DEFINE_PORT_METHOD(name, method, fun_obj_def) \
-    static mp_obj_t lpf2_port_##name method \
-    static fun_obj_def(lpf2_port_##name##_obj, lpf2_port_##name);
+#define DEFINE_PORT_METHOD(name, method, fun_obj_def) DEFINE_METHOD(port_##name, method, fun_obj_def)
 
-#define DEFINE_PORT_METHOD_VAR_BETWEEN(name, method, min_args, max_args) \
-    static mp_obj_t lpf2_port_##name(size_t n_args, const mp_obj_t *args) method \
-    static MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_port_##name##_obj, min_args, max_args, lpf2_port_##name);
+#define DEFINE_PORT_METHOD_VAR_BETWEEN(name, method, min_args, max_args) DEFINE_METHOD_VAR_BETWEEN(port_##name,  method, min_args, max_args)
 
-#define GET_PORT_METHOD_OBJ(name) lpf2_port_##name##_obj
+#define GET_PORT_METHOD_OBJ(name) GET_METHOD_OBJ(port_##name)
 
 DEFINE_PORT_METHOD(write_data, (mp_obj_t self_in,
                                            mp_obj_t mode_in,
@@ -224,6 +221,23 @@ DEFINE_PORT_METHOD(get_view_count, (mp_obj_t self_in)
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
+DEFINE_PORT_METHOD(get_mode, (mp_obj_t self_in, mp_obj_t num)
+{
+    auto self = GET_SELF_CPP();
+    auto& modes = self->getModes();
+    uint8_t modeNum = mp_obj_get_int(num);
+    if (modeNum >= modes.size())
+    {
+        return mp_const_none;
+    }
+    mp_obj_lpf2_mode_t *mode = (mp_obj_lpf2_mode_t*)m_malloc_with_finaliser(sizeof(mp_obj_lpf2_mode_t));
+    mode->base.type = &lpf2_mode_type;
+    mode->cpp_obj = new Lpf2::Mode(modes[modeNum]);
+    mode->owned = true; // owned by the mode
+    return MP_OBJ_FROM_PTR(mode);
+},
+MP_DEFINE_CONST_FUN_OBJ_2);
+
 DEFINE_PORT_METHOD(get_mode_combo_count, (mp_obj_t self_in)
 {
     return mp_obj_new_int(GET_SELF_CPP()->getModeComboCount());
@@ -236,7 +250,64 @@ DEFINE_PORT_METHOD(get_mode_combo, (mp_obj_t self_in, mp_obj_t combo)
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
 
+DEFINE_PORT_METHOD(get_input_modes, (mp_obj_t self_in)
+{
+    return mp_obj_new_int(GET_SELF_CPP()->getInputModes());
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
+DEFINE_PORT_METHOD(get_output_modes, (mp_obj_t self_in)
+{
+    return mp_obj_new_int(GET_SELF_CPP()->getOutputModes());
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
+DEFINE_PORT_METHOD(get_capabilities, (mp_obj_t self_in)
+{
+    return mp_obj_new_int(GET_SELF_CPP()->getCapabilities());
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
+DEFINE_PORT_METHOD(get_info_str, (mp_obj_t self_in)
+{
+    std::string s = GET_SELF_CPP()->getInfoStr();
+    return mp_obj_new_str(s.c_str(), s.length());
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
+DEFINE_PORT_METHOD(get_port_num, (mp_obj_t self_in)
+{
+    return mp_obj_new_int((uint8_t)GET_SELF_CPP()->getPortNum());
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
+DEFINE_PORT_METHOD(speed_to_raw, (mp_obj_t self_in, mp_obj_t speed)
+{
+    return mp_obj_new_int((int)Lpf2::Port::speedToRaw((int8_t)mp_obj_get_int(speed)));
+},
+MP_DEFINE_CONST_FUN_OBJ_2);
+
+DEFINE_PORT_METHOD(raw_to_speed, (mp_obj_t self_in, mp_obj_t raw)
+{
+    return mp_obj_new_int((int)Lpf2::Port::rawToSpeed((uint8_t)mp_obj_get_int(raw)));
+},
+MP_DEFINE_CONST_FUN_OBJ_2);
+
+DEFINE_PORT_METHOD(del, (mp_obj_t self_in)
+{
+    auto self = GET_SELF();
+    LPF2_LOG_V("Deleting Port, owner: %s", self->owned ? "true" : "false");
+    if (self->owned)
+    {
+        delete self->cpp_obj;
+        self->cpp_obj = nullptr;
+    }
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
 static const mp_rom_map_elem_t lpf2_port_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(del))},
     {MP_ROM_QSTR(MP_QSTR_writeData), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(write_data))},
     {MP_ROM_QSTR(MP_QSTR_startPower), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(start_power))},
     {MP_ROM_QSTR(MP_QSTR_setAccTime), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(set_acc_time))},
@@ -256,8 +327,16 @@ static const mp_rom_map_elem_t lpf2_port_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_device_type))},
     {MP_ROM_QSTR(MP_QSTR_getModeCount), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_mode_count))},
     {MP_ROM_QSTR(MP_QSTR_getViewCount), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_view_count))},
+    {MP_ROM_QSTR(MP_QSTR_getMode), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_mode))},
     {MP_ROM_QSTR(MP_QSTR_getModeComboCount), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_mode_combo_count))},
     {MP_ROM_QSTR(MP_QSTR_getModeCombo), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_mode_combo))},
+    {MP_ROM_QSTR(MP_QSTR_getInputModes), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_input_modes))},
+    {MP_ROM_QSTR(MP_QSTR_getOutputModes), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_output_modes))},
+    {MP_ROM_QSTR(MP_QSTR_getCapabilities), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_capabilities))},
+    {MP_ROM_QSTR(MP_QSTR_getInfoStr), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_info_str))},
+    {MP_ROM_QSTR(MP_QSTR_getPortNum), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_port_num))},
+    {MP_ROM_QSTR(MP_QSTR_speedToRaw), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(speed_to_raw))},
+    {MP_ROM_QSTR(MP_QSTR_rawToSpeed), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(raw_to_speed))},
 };
 
 static MP_DEFINE_CONST_DICT(lpf2_port_locals_dict, lpf2_port_locals_table);
