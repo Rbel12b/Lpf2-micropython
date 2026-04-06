@@ -57,3 +57,47 @@ void BuiltInRGB_setColor(uint8_t r, uint8_t g, uint8_t b)
     ESP_ERROR_CHECK(led_strip_set_pixel(led_strip, 0, r, g, b));
     ESP_ERROR_CHECK(led_strip_refresh(led_strip));
 }
+
+void BuiltInRGB_setColorIdx(Lpf2::ColorIDX idx)
+{
+    switch (idx)
+    {
+        case Lpf2::ColorIDX::BLACK:
+            BuiltInRGB_setColor(0, 0, 0);
+            break;
+        case Lpf2::ColorIDX::BLUE:
+            BuiltInRGB_setColor(0, 0, 50);
+            break;
+        case Lpf2::ColorIDX::GREEN:
+            BuiltInRGB_setColor(0, 50, 0);
+            break;
+        case Lpf2::ColorIDX::RED:
+            BuiltInRGB_setColor(50, 0, 0);
+            break;
+        case Lpf2::ColorIDX::WHITE:
+            BuiltInRGB_setColor(50, 50, 50);
+            break;
+        case Lpf2::ColorIDX::YELLOW:
+            BuiltInRGB_setColor(50, 50, 0);
+            break;
+        case Lpf2::ColorIDX::ORANGE:
+            BuiltInRGB_setColor(50, 20, 0);
+            break;
+        case Lpf2::ColorIDX::PURPLE:
+            BuiltInRGB_setColor(30, 0, 30);
+            break;
+        case Lpf2::ColorIDX::PINK:
+            BuiltInRGB_setColor(50, 0, 20);
+            break;
+        case Lpf2::ColorIDX::LIGHTBLUE:
+            BuiltInRGB_setColor(0, 20, 50);
+            break;
+        case Lpf2::ColorIDX::CYAN:
+            BuiltInRGB_setColor(0, 50, 50);
+            break;
+
+        default:
+            BuiltInRGB_setColor(0, 0, 0);
+            break;
+    }
+}

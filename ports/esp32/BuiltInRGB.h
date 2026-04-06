@@ -20,8 +20,10 @@
 #define _BUILTINRGB_H_
 
 #include <cstdint>
+#include "Lpf2/LWPConst.hpp"
 
 void BuiltInRGB_init();
 void BuiltInRGB_setColor(uint8_t r, uint8_t g, uint8_t b);
+void BuiltInRGB_setColorIdx(Lpf2::ColorIDX idx);
 
 #endif

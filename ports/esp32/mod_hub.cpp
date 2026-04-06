@@ -4,6 +4,7 @@ extern "C" {
 #include "Ports.h"
 #include "mod_types.h"
 #include "mod_hub.h"
+#include "BuiltInRGB.h"
 
 extern "C"
 {
@@ -30,10 +31,11 @@ extern "C"
 
     // --- ports module ---
     static const mp_rom_map_elem_t ports_globals_table[] = {
-        {MP_ROM_QSTR(MP_QSTR_A), MP_ROM_PTR(&port_A_obj)},
-        {MP_ROM_QSTR(MP_QSTR_B), MP_ROM_PTR(&port_B_obj)},
-        {MP_ROM_QSTR(MP_QSTR_C), MP_ROM_PTR(&port_C_obj)},
-        {MP_ROM_QSTR(MP_QSTR_D), MP_ROM_PTR(&port_D_obj)},
+        { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_ports) },
+        { MP_ROM_QSTR(MP_QSTR_A), MP_ROM_PTR(&port_A_obj) },
+        { MP_ROM_QSTR(MP_QSTR_B), MP_ROM_PTR(&port_B_obj) },
+        { MP_ROM_QSTR(MP_QSTR_C), MP_ROM_PTR(&port_C_obj) },
+        { MP_ROM_QSTR(MP_QSTR_D), MP_ROM_PTR(&port_D_obj) },
     };
     static MP_DEFINE_CONST_DICT(ports_globals, ports_globals_table);
 
@@ -52,7 +54,8 @@ extern "C"
     static MP_DEFINE_CONST_FUN_OBJ_1(log_setLevel_obj, log_setLevel);
 
     static const mp_rom_map_elem_t log_globals_table[] = {
-        {MP_ROM_QSTR(MP_QSTR_setLevel), MP_ROM_PTR(&log_setLevel_obj)},
+        { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_log) },
+        { MP_ROM_QSTR(MP_QSTR_setLevel), MP_ROM_PTR(&log_setLevel_obj) },
     };
     static MP_DEFINE_CONST_DICT(log_globals, log_globals_table);
 
@@ -61,9 +64,37 @@ extern "C"
         .globals = (mp_obj_dict_t *)&log_globals,
     };
 
+    // --- led module ---
+    static mp_obj_t led_setColorRGB(mp_obj_t r, mp_obj_t g, mp_obj_t b)
+    {
+        BuiltInRGB_setColor(mp_obj_get_int(r), mp_obj_get_int(g), mp_obj_get_int(b));
+        return mp_const_none;
+    }
+    static MP_DEFINE_CONST_FUN_OBJ_3(led_setColorRGB_obj, led_setColorRGB);
+
+    static mp_obj_t led_setColor(mp_obj_t idx)
+    {
+        BuiltInRGB_setColorIdx((Lpf2::ColorIDX)mp_obj_get_int(idx));
+        return mp_const_none;
+    }
+    static MP_DEFINE_CONST_FUN_OBJ_1(led_setColor_obj, led_setColor);
+
+    static const mp_rom_map_elem_t led_globals_table[] = {
+        { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_led) },
+        { MP_ROM_QSTR(MP_QSTR_setColorRGB), MP_ROM_PTR(&led_setColorRGB_obj) },
+        { MP_ROM_QSTR(MP_QSTR_setColor), MP_ROM_PTR(&led_setColor_obj) },
+    };
+    static MP_DEFINE_CONST_DICT(led_globals, led_globals_table);
+
+    const mp_obj_module_t hub_led_module = {
+        .base = {&mp_type_module},
+        .globals = (mp_obj_dict_t *)&led_globals,
+    };
+
     // --- board module ---
 
     static const mp_rom_map_elem_t board_globals_table[] = {
+        { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_board) },
         { MP_ROM_QSTR(MP_QSTR_SD_MODE), MP_ROM_INT(SD_MODE) },
         { MP_ROM_QSTR(MP_QSTR_SD_SLOT), MP_ROM_INT(SD_SLOT) },
         { MP_ROM_QSTR(MP_QSTR_SD_CS), MP_ROM_INT(SD_CS) },
@@ -87,9 +118,11 @@ extern "C"
 
     // --- hub module ---
     static const mp_rom_map_elem_t hub_globals_table[] = {
-        {MP_ROM_QSTR(MP_QSTR_ports), MP_ROM_PTR(&hub_ports_module)},
-        {MP_ROM_QSTR(MP_QSTR_log), MP_ROM_PTR(&hub_log_module)},
-        {MP_ROM_QSTR(MP_QSTR_board), MP_ROM_PTR(&hub_board_module)},
+        { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_hub) },
+        { MP_ROM_QSTR(MP_QSTR_ports), MP_ROM_PTR(&hub_ports_module) },
+        { MP_ROM_QSTR(MP_QSTR_log), MP_ROM_PTR(&hub_log_module) },
+        { MP_ROM_QSTR(MP_QSTR_led), MP_ROM_PTR(&hub_led_module) },
+        { MP_ROM_QSTR(MP_QSTR_board), MP_ROM_PTR(&hub_board_module) },
     };
     static MP_DEFINE_CONST_DICT(hub_globals, hub_globals_table);
 
