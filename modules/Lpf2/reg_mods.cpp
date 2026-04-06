@@ -10,6 +10,7 @@ LPF2_DEFINE_MOD_WITH_GLOB(local,
 /* --- lpf2 --- */
 LPF2_DEFINE_MOD_WITH_GLOB_ATTR_USED(lpf2,
     LPF2_GET_LPF2_MOD_REG(hub_type),
+    LPF2_GET_LPF2_MOD_REG(device_type),
     LPF2_GET_LPF2_MOD_REG(color),
     LPF2_GET_LPF2_MOD_REG(local),
     LPF2_GET_LPF2_TYPE_REG(port),

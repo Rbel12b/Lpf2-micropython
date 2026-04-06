@@ -74,5 +74,6 @@ extern const mp_obj_type_t lpf2_mode_type;
 
 LPF2_MOD_EXTERN(color);
 LPF2_MOD_EXTERN(hub_type);
+LPF2_MOD_EXTERN(device_type);
 
 } // extern "C"
