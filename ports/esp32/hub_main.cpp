@@ -106,28 +106,8 @@ void loop()
     vTaskDelay(1);
 
     Ports_update();
-    // uint8_t b = 0x01;
-    // uart_write_bytes(UART_NUM_2, &b, 1);
 
     vHub.update();
-
-    if (!vHub.isSubscribed)
-    {
-        auto now = LPF2_GET_TIME();
-        if (now - lastBlink >= 500)
-        {
-            lastBlink = now;
-            lastBlinkstate = !lastBlinkstate;
-            if (lastBlinkstate)
-            {
-                BuiltInRGB_setColor(50, 50, 50);
-            }
-            else
-            {
-                BuiltInRGB_setColor(0, 0, 0);
-            }
-        }
-    }
 }
 
 int vLEDWriteCallback(uint8_t mode, const std::vector<uint8_t> &data, void* userData)
@@ -135,46 +115,7 @@ int vLEDWriteCallback(uint8_t mode, const std::vector<uint8_t> &data, void* user
     if (mode == 0 && data.size() >= 1)
     {
         Lpf2::ColorIDX color = (Lpf2::ColorIDX)data[0];
-        switch (color)
-        {
-            case Lpf2::ColorIDX::BLACK:
-                BuiltInRGB_setColor(0, 0, 0);
-                break;
-            case Lpf2::ColorIDX::BLUE:
-                BuiltInRGB_setColor(0, 0, 50);
-                break;
-            case Lpf2::ColorIDX::GREEN:
-                BuiltInRGB_setColor(0, 50, 0);
-                break;
-            case Lpf2::ColorIDX::RED:
-                BuiltInRGB_setColor(50, 0, 0);
-                break;
-            case Lpf2::ColorIDX::WHITE:
-                BuiltInRGB_setColor(50, 50, 50);
-                break;
-            case Lpf2::ColorIDX::YELLOW:
-                BuiltInRGB_setColor(50, 50, 0);
-                break;
-            case Lpf2::ColorIDX::ORANGE:
-                BuiltInRGB_setColor(50, 20, 0);
-                break;
-            case Lpf2::ColorIDX::PURPLE:
-                BuiltInRGB_setColor(30, 0, 30);
-                break;
-            case Lpf2::ColorIDX::PINK:
-                BuiltInRGB_setColor(50, 0, 20);
-                break;
-            case Lpf2::ColorIDX::LIGHTBLUE:
-                BuiltInRGB_setColor(0, 20, 50);
-                break;
-            case Lpf2::ColorIDX::CYAN:
-                BuiltInRGB_setColor(0, 50, 50);
-                break;
-
-            default:
-                BuiltInRGB_setColor(0, 0, 0);
-                break;
-        }
+        BuiltInRGB_setColorIdx(color);
     }
     else if (mode == 1 && data.size() >= 3)
     {

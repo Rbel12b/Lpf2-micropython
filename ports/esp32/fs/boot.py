@@ -1,4 +1,4 @@
-import hub,machine,vfs,gc
+import hub,machine,vfs,gc,lpf2
 
 try:
     if hub.board.SD_MODE == 2:
@@ -17,3 +17,5 @@ except Exception as e:
 
 gc.enable()
 gc.threshold(4096)
+
+hub.led.setColor(lpf2.color.GREEN)
