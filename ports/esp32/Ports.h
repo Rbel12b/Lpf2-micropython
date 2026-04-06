@@ -24,11 +24,13 @@
 #include "ESP32S3_IO.h"
 #include "Lpf2/HubEmulation.hpp"
 #include "Lpf2/Local/Port.hpp"
+#include "Lpf2/Virtual/Port.hpp"
 
 extern Lpf2::Local::Port portA;
 extern Lpf2::Local::Port portB;
 extern Lpf2::Local::Port portC;
 extern Lpf2::Local::Port portD;
+extern Lpf2::Virtual::Port vLEDPort;
 
 void Ports_init();
 void Ports_update();

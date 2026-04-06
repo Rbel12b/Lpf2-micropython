@@ -13,20 +13,24 @@ extern "C"
     static mp_obj_lpf2_port_t port_B_obj;
     static mp_obj_lpf2_port_t port_C_obj;
     static mp_obj_lpf2_port_t port_D_obj;
+    static mp_obj_lpf2_port_t port_HUB_LED_obj;
 
     void mod_hub_ports_init()
     {
-        port_A_obj.base.type = &lpf2_local_port_type;
+        port_A_obj.base.type = &lpf2_port_type;
         port_A_obj.cpp_obj = &portA;
 
-        port_B_obj.base.type = &lpf2_local_port_type;
+        port_B_obj.base.type = &lpf2_port_type;
         port_B_obj.cpp_obj = &portB;
 
-        port_C_obj.base.type = &lpf2_local_port_type;
+        port_C_obj.base.type = &lpf2_port_type;
         port_C_obj.cpp_obj = &portC;
 
-        port_D_obj.base.type = &lpf2_local_port_type;
+        port_D_obj.base.type = &lpf2_port_type;
         port_D_obj.cpp_obj = &portD;
+
+        port_HUB_LED_obj.base.type = &lpf2_port_type;
+        port_HUB_LED_obj.cpp_obj = &vLEDPort;
     }
 
     // --- ports module ---
@@ -36,6 +40,7 @@ extern "C"
         { MP_ROM_QSTR(MP_QSTR_B), MP_ROM_PTR(&port_B_obj) },
         { MP_ROM_QSTR(MP_QSTR_C), MP_ROM_PTR(&port_C_obj) },
         { MP_ROM_QSTR(MP_QSTR_D), MP_ROM_PTR(&port_D_obj) },
+        { MP_ROM_QSTR(MP_QSTR_HUB_LED), MP_ROM_PTR(&port_HUB_LED_obj) },
     };
     static MP_DEFINE_CONST_DICT(ports_globals, ports_globals_table);
 
