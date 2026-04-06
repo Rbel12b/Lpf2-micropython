@@ -41,6 +41,10 @@ extern "C" {
     LPF2_DEFINE_GLOB_TABLE_DICT(name, __VA_ARGS__); \
     LPF2_DEFINE_MOD(name)
 
+#define LPF2_DEFINE_MOD_WITH_GLOB_STATIC(name, ...) \
+    LPF2_DEFINE_GLOB_TABLE_DICT(name, __VA_ARGS__); \
+    static LPF2_DEFINE_MOD(name)
+
 #define LPF2_DEFINE_MOD_WITH_GLOB_ATTR_USED(name, ...) \
     LPF2_DEFINE_GLOB_TABLE_DICT(name, __VA_ARGS__); \
     extern "C" __attribute__((used)) \
@@ -75,5 +79,6 @@ extern const mp_obj_type_t lpf2_mode_type;
 LPF2_MOD_EXTERN(color);
 LPF2_MOD_EXTERN(hub_type);
 LPF2_MOD_EXTERN(device_type);
+LPF2_MOD_EXTERN(port_num);
 
 } // extern "C"

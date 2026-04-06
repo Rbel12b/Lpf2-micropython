@@ -74,4 +74,86 @@ LPF2_DEFINE_MOD_WITH_GLOB(color,
     LPF2_REG_COLOR(NONE)
 );
 
+/* --- lpf2.port_num.controlplus --- */
+#define LPF2_REG_CPHP(name) LPF2_REG(name, Lpf2::ControlPlusHubPort::name)
+LPF2_DEFINE_MOD_WITH_GLOB_STATIC(controlplus, 
+    LPF2_REG_CPHP(A),
+    LPF2_REG_CPHP(B),
+    LPF2_REG_CPHP(C),
+    LPF2_REG_CPHP(D),
+    LPF2_REG_CPHP(LED),
+    LPF2_REG_CPHP(CURRENT),
+    LPF2_REG_CPHP(VOLTAGE),
+    LPF2_REG_CPHP(TEMP),
+    LPF2_REG_CPHP(TEMP2),
+    LPF2_REG_CPHP(ACCELEROMETER),
+    LPF2_REG_CPHP(GYRO),
+    LPF2_REG_CPHP(TILT),
+    LPF2_REG_CPHP(GESTURE),
+);
+
+/* --- lpf2.port_num.duplotrain --- */
+#define LPF2_REG_DPHP(name) LPF2_REG(name, Lpf2::DuploTrainHubPort::name)
+LPF2_DEFINE_MOD_WITH_GLOB_STATIC(duplotrain, 
+    LPF2_REG_DPHP(MOTOR),
+    LPF2_REG_DPHP(LED),
+    LPF2_REG_DPHP(SPEAKER),
+    LPF2_REG_DPHP(COLOR),
+    LPF2_REG_DPHP(SPEEDOMETER),
+    LPF2_REG_DPHP(VOLTAGE),
+);
+
+/* --- lpf2.port_num.movehub --- */
+#define LPF2_REG_MHP(name) LPF2_REG(name, Lpf2::MoveHubPort::name)
+LPF2_DEFINE_MOD_WITH_GLOB_STATIC(movehub, 
+    LPF2_REG_MHP(A),
+    LPF2_REG_MHP(B),
+    LPF2_REG_MHP(AB),
+    LPF2_REG_MHP(C),
+    LPF2_REG_MHP(D),
+    LPF2_REG_MHP(LED),
+    LPF2_REG_MHP(TILT),
+    LPF2_REG_MHP(CURRENT),
+    LPF2_REG_MHP(VOLTAGE),
+);
+
+/* --- lpf2.port_num.poweredup --- */
+#define LPF2_REG_PUHP(name) LPF2_REG(name, Lpf2::PoweredUpHubPort::name)
+LPF2_DEFINE_MOD_WITH_GLOB_STATIC(poweredup, 
+    LPF2_REG_PUHP(A),
+    LPF2_REG_PUHP(B),
+    LPF2_REG_PUHP(LED),
+    LPF2_REG_PUHP(CURRENT),
+    LPF2_REG_PUHP(VOLTAGE),
+);
+
+/* --- lpf2.port_num.poweredupremote --- */
+#define LPF2_REG_PURHP(name) LPF2_REG(name, Lpf2::PoweredUpRemoteHubPort::name)
+LPF2_DEFINE_MOD_WITH_GLOB_STATIC(poweredupremote,
+    LPF2_REG_PURHP(LEFT),
+    LPF2_REG_PURHP(RIGHT),
+    LPF2_REG_PURHP(LED),
+    LPF2_REG_PURHP(VOLTAGE),
+    LPF2_REG_PURHP(RSSI),
+);
+
+/* --- lpf2.port_num.mario --- */
+#define LPF2_REG_MP(name) LPF2_REG(name, Lpf2::MarioHubPort::name)
+LPF2_DEFINE_MOD_WITH_GLOB_STATIC(mario,
+    LPF2_REG_MP(GESTURE),
+    LPF2_REG_MP(BARCODE),
+    LPF2_REG_MP(PANTS),
+    LPF2_REG_MP(VOLTAGE),
+);
+
+/* --- lpf2.port_num --- */
+LPF2_DEFINE_MOD_WITH_GLOB(port_num,
+    LPF2_GET_LPF2_MOD_REG(controlplus),
+    LPF2_GET_LPF2_MOD_REG(duplotrain),
+    LPF2_GET_LPF2_MOD_REG(movehub),
+    LPF2_GET_LPF2_MOD_REG(poweredup),
+    LPF2_GET_LPF2_MOD_REG(poweredupremote),
+    LPF2_GET_LPF2_MOD_REG(mario),
+);
+
 } // extern "C"
