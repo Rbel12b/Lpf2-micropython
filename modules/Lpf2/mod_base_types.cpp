@@ -103,7 +103,7 @@ static void lpf2_mode_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
     }
 }
 
-DEFINE_METHOD(mode_del, (mp_obj_t self_in)
+LPF2_DEFINE_METHOD(mode_del, (mp_obj_t self_in)
 {
     auto self = GET_SELF();
     LPF2_LOG_V("Deleting Mode, owner: %s", self->owned ? "true" : "false");
@@ -117,7 +117,7 @@ DEFINE_METHOD(mode_del, (mp_obj_t self_in)
 MP_DEFINE_CONST_FUN_OBJ_1);
 
 static const mp_rom_map_elem_t lpf2_mode_locals_table[] = {
-    {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&GET_METHOD_OBJ(mode_del))},
+    {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&LPF2_GET_METHOD_OBJ(mode_del))},
 };
 
 static MP_DEFINE_CONST_DICT(lpf2_mode_locals_dict, lpf2_mode_locals_table);

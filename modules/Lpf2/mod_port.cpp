@@ -24,11 +24,11 @@ static mp_obj_t lpf2_port_make_new(const mp_obj_type_t *type,
     return MP_OBJ_FROM_PTR(o);
 }
 
-#define DEFINE_PORT_METHOD(name, method, fun_obj_def) DEFINE_METHOD(port_##name, method, fun_obj_def)
+#define DEFINE_PORT_METHOD(name, method, fun_obj_def) LPF2_DEFINE_METHOD(port_##name, method, fun_obj_def)
 
-#define DEFINE_PORT_METHOD_VAR_BETWEEN(name, method, min_args, max_args) DEFINE_METHOD_VAR_BETWEEN(port_##name,  method, min_args, max_args)
+#define DEFINE_PORT_METHOD_VAR_BETWEEN(name, method, min_args, max_args) LPF2_DEFINE_METHOD_VAR_BETWEEN(port_##name,  method, min_args, max_args)
 
-#define GET_PORT_METHOD_OBJ(name) GET_METHOD_OBJ(port_##name)
+#define GET_PORT_METHOD_OBJ(name) LPF2_GET_METHOD_OBJ(port_##name)
 
 DEFINE_PORT_METHOD(write_data, (mp_obj_t self_in,
                                            mp_obj_t mode_in,
