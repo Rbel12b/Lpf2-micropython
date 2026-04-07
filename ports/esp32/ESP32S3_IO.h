@@ -110,7 +110,7 @@ public:
         return (len == 1) ? byte : -1;
     }
 
-    size_t read(const uint8_t *data, size_t length) override
+    size_t read(uint8_t *data, size_t length) override
     {
         if (!m_uartActive || !data || length == 0)
             return 0;

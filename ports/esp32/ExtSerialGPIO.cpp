@@ -82,7 +82,7 @@ int Lpf2ExtSerial::read()
     return m_parent->sc.read();
 }
 
-size_t Lpf2ExtSerial::read(const uint8_t *data, size_t length)
+size_t Lpf2ExtSerial::read(uint8_t *data, size_t length)
 {
     return m_parent->sc.readBytes((uint8_t *)data, length);;
 }

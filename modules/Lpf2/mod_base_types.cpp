@@ -12,7 +12,7 @@ static mp_obj_t lpf2_mode_make_new(const mp_obj_type_t *type,
                                     const mp_obj_t *args)
 {
 
-    mp_obj_lpf2_mode_t *o = (mp_obj_lpf2_mode_t*)m_malloc_with_finaliser(sizeof(mp_obj_lpf2_mode_t));
+    SELF_TYPE *o = (SELF_TYPE*)m_malloc_with_finaliser(sizeof(SELF_TYPE));
     o->base.type = type;
 
     o->cpp_obj = new Lpf2::Mode;
@@ -107,7 +107,7 @@ LPF2_DEFINE_METHOD(mode_del, (mp_obj_t self_in)
 {
     auto self = GET_SELF();
     LPF2_LOG_V("Deleting Mode, owner: %s", self->owned ? "true" : "false");
-    if (self->owned)
+    if (self->owned && self->cpp_obj)
     {
         delete self->cpp_obj;
         self->cpp_obj = nullptr;

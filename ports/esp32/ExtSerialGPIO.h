@@ -40,7 +40,7 @@ public:
     void setBaudrate(uint32_t baudrate) override;
     size_t write(const uint8_t *data, size_t length) override;
     int read() override;
-    size_t read(const uint8_t *data, size_t length) override;
+    size_t read(uint8_t *data, size_t length) override;
     int available() override;
     void flush() override;
     void setUartPinsState(bool highZ) override;
