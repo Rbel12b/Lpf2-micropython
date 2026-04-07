@@ -91,6 +91,20 @@ DEFINE_HUB_EMU_METHOD(get_name, (mp_obj_t self_in)
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
+DEFINE_HUB_EMU_METHOD(attach_port, (mp_obj_t self_in, mp_obj_t port_num, mp_obj_t port)
+{
+    if (!mp_obj_is_type(port, &lpf2_port_type) &&
+        !mp_obj_is_subclass_fast(
+            MP_OBJ_FROM_PTR(mp_obj_get_type(port)),
+            MP_OBJ_FROM_PTR(&lpf2_port_type))) {
+        mp_raise_TypeError(MP_ERROR_TEXT("expected Port"));
+    }
+    mp_obj_lpf2_port_t *port_obj = (mp_obj_lpf2_port_t*)MP_OBJ_TO_PTR(port);
+    GET_SELF_CPP()->attachPort(mp_obj_get_uint(port_num), port_obj->cpp_obj);
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_3);
+
 DEFINE_HUB_EMU_METHOD(del, (mp_obj_t self_in)
 {
     auto self = GET_SELF();
@@ -115,6 +129,7 @@ static const mp_rom_map_elem_t lpf2_hub_emulation_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_setButtonState), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_buton_state))},
     {MP_ROM_QSTR(MP_QSTR_setAlert), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_alert))},
     {MP_ROM_QSTR(MP_QSTR_getName), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(get_name))},
+    {MP_ROM_QSTR(MP_QSTR_attachPort), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(attach_port))},
 };
 
 static MP_DEFINE_CONST_DICT(lpf2_hub_emulation_locals_dict, lpf2_hub_emulation_locals_table);
