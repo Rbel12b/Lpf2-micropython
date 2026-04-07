@@ -23,7 +23,7 @@ extern "C"
         port_B_obj.base.type = &lpf2_port_type;
         port_B_obj.cpp_obj = &portB;
 
-        port_C_obj.base.type = &lpf2_port_type;
+        port_C_obj.base.type = &lpf2_local_port_type;
         port_C_obj.cpp_obj = &portC;
 
         port_D_obj.base.type = &lpf2_port_type;

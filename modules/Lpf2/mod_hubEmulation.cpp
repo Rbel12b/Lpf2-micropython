@@ -67,8 +67,33 @@ DEFINE_HUB_EMU_METHOD(set_name, (mp_obj_t self_in, mp_obj_t name)
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
 
-// fw and hw version
-// ---
+DEFINE_HUB_EMU_METHOD(set_fw_version, (mp_obj_t self_in, mp_obj_t version)
+{
+    if (!mp_obj_is_type(version, &lpf2_version_type) &&
+        !mp_obj_is_subclass_fast(
+            MP_OBJ_FROM_PTR(mp_obj_get_type(version)),
+            MP_OBJ_FROM_PTR(&lpf2_version_type))) {
+        mp_raise_TypeError(MP_ERROR_TEXT("expected lpf2.version"));
+    }
+    mp_obj_lpf2_version_t *version_obj = (mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(version);
+    GET_SELF_CPP()->setFirmwareVersion(*version_obj->cpp_obj);
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_2);
+
+DEFINE_HUB_EMU_METHOD(set_hw_version, (mp_obj_t self_in, mp_obj_t version)
+{
+    if (!mp_obj_is_type(version, &lpf2_version_type) &&
+        !mp_obj_is_subclass_fast(
+            MP_OBJ_FROM_PTR(mp_obj_get_type(version)),
+            MP_OBJ_FROM_PTR(&lpf2_version_type))) {
+        mp_raise_TypeError(MP_ERROR_TEXT("expected lpf2.version"));
+    }
+    mp_obj_lpf2_version_t *version_obj = (mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(version);
+    GET_SELF_CPP()->setHardwareVersion(*version_obj->cpp_obj);
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_2);
 
 DEFINE_HUB_EMU_METHOD(set_buton_state, (mp_obj_t self_in, mp_obj_t state)
 {
@@ -97,7 +122,7 @@ DEFINE_HUB_EMU_METHOD(attach_port, (mp_obj_t self_in, mp_obj_t port_num, mp_obj_
         !mp_obj_is_subclass_fast(
             MP_OBJ_FROM_PTR(mp_obj_get_type(port)),
             MP_OBJ_FROM_PTR(&lpf2_port_type))) {
-        mp_raise_TypeError(MP_ERROR_TEXT("expected Port"));
+        mp_raise_TypeError(MP_ERROR_TEXT("expected lpf2.port"));
     }
     mp_obj_lpf2_port_t *port_obj = (mp_obj_lpf2_port_t*)MP_OBJ_TO_PTR(port);
     GET_SELF_CPP()->attachPort(mp_obj_get_uint(port_num), port_obj->cpp_obj);
@@ -126,6 +151,8 @@ static const mp_rom_map_elem_t lpf2_hub_emulation_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_setBatteryLevel), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_battery_level))},
     {MP_ROM_QSTR(MP_QSTR_setBatteryType), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_battery_type))},
     {MP_ROM_QSTR(MP_QSTR_setName), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_name))},
+    {MP_ROM_QSTR(MP_QSTR_setFirmwareVersion), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_fw_version))},
+    {MP_ROM_QSTR(MP_QSTR_setHardwareVersion), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_hw_version))},
     {MP_ROM_QSTR(MP_QSTR_setButtonState), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_buton_state))},
     {MP_ROM_QSTR(MP_QSTR_setAlert), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_alert))},
     {MP_ROM_QSTR(MP_QSTR_getName), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(get_name))},

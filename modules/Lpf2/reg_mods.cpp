@@ -19,6 +19,7 @@ LPF2_DEFINE_MOD_WITH_GLOB_ATTR_USED(lpf2,
     LPF2_GET_LPF2_MOD_REG(local),
     LPF2_GET_LPF2_TYPE_REG(port),
     LPF2_GET_LPF2_TYPE_REG(mode),
+    LPF2_GET_LPF2_TYPE_REG(version),
     LPF2_GET_LPF2_TYPE_REG(hub_emulation),
 );
 
