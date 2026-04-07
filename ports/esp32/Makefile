@@ -50,11 +50,12 @@ ifeq ($(BUILD_VERBOSE),1)
 endif
 
 define RUN_IDF_PY
-	$(Q)idf.py $(IDFPY_FLAGS) -B $(BUILD) $(1)
+	$(eval IDF_TARGET := $(shell cat $(BOARD_DIR)/IDF_TARGET))
+	$(Q) IDF_TARGET=$(IDF_TARGET) idf.py $(IDFPY_FLAGS) -B $(BUILD) $(1)
 endef
 
 all:
-	$(Q)idf.py $(IDFPY_FLAGS) -B $(BUILD) build || (echo -e $(HELP_BUILD_ERROR); false)
+	$(call RUN_IDF_PY,build) || (echo -e $(HELP_BUILD_ERROR); false)
 	$(Q)$(PYTHON) makeimg.py \
 		$(BUILD)/sdkconfig \
 		$(BUILD)/bootloader/bootloader.bin \

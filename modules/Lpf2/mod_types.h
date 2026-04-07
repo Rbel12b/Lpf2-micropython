@@ -8,6 +8,7 @@ extern "C" {
 #include "Lpf2/Port.hpp"
 #include "Lpf2/Local/Port.hpp"
 #include "Lpf2/LWPConst.hpp"
+#include "Lpf2/HubEmulation.hpp"
 
 #define LPF2_DEFINE_METHOD(name, method, fun_obj_def) \
     static mp_obj_t lpf2_##name method \
@@ -62,7 +63,7 @@ typedef struct _mp_obj_lpf2_port_t
 {
     mp_obj_base_t base;
     Lpf2::Port *cpp_obj = nullptr;
-    bool owned = false; // owned by the mp obj
+    bool owned = false; // if true cpp_obj is owned by the mp obj
     bool is_trampoline = false;
 } mp_obj_lpf2_port_t;
 extern const mp_obj_type_t lpf2_port_type;
@@ -72,13 +73,31 @@ typedef struct _mp_obj_lpf2_mode_t
 {
     mp_obj_base_t base;
     Lpf2::Mode *cpp_obj = nullptr;
-    bool owned = false; // owned by the mp obj
+    bool owned = false; // if true cpp_obj is owned by the mp obj
 } mp_obj_lpf2_mode_t;
 extern const mp_obj_type_t lpf2_mode_type;
+typedef struct _mp_obj_lpf2_version_t
+{
+    mp_obj_base_t base;
+    Lpf2::Version*cpp_obj = nullptr;
+    bool owned = false; // if true cpp_obj is owned by the mp obj
+} mp_obj_lpf2_version_t;
+extern const mp_obj_type_t lpf2_version_type;
+
+typedef struct _mp_obj_lpf2_hub_emulation_t
+{
+    mp_obj_base_t base;
+    Lpf2::HubEmulation *cpp_obj = nullptr;
+    bool owned = false; // if true cpp_obj is owned by the mp obj
+} mp_obj_lpf2_hub_emulation_t;
+extern const mp_obj_type_t lpf2_hub_emulation_type;
 
 LPF2_MOD_EXTERN(color);
 LPF2_MOD_EXTERN(hub_type);
 LPF2_MOD_EXTERN(device_type);
+LPF2_MOD_EXTERN(battery_type);
+LPF2_MOD_EXTERN(alerts);
+LPF2_MOD_EXTERN(button_state);
 LPF2_MOD_EXTERN(port_num);
 
 } // extern "C"

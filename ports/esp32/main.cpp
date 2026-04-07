@@ -354,8 +354,7 @@ void MICROPY_ESP_IDF_ENTRY(void) {
     // Create and transfer control to the MicroPython task.
     xTaskCreatePinnedToCore(mp_task, "mp_task", MICROPY_TASK_STACK_SIZE / sizeof(StackType_t), NULL, MP_TASK_PRIORITY, &mp_main_task_handle, MP_TASK_COREID);
 
-    // Task for the ports and hub emulation (if enabled).
-    xTaskCreatePinnedToCore(hub_main_task, "hub_main_task", 8192, NULL, 5, NULL, 0);
+    hub_main_task(nullptr);
 }
 
 MP_WEAK void nlr_jump_fail(void *val) {

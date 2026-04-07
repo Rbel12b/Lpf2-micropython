@@ -14,7 +14,7 @@ static mp_obj_t lpf2_port_make_new(const mp_obj_type_t *type,
                                     const mp_obj_t *args)
 {
 
-    mp_obj_lpf2_port_t *o = (mp_obj_lpf2_port_t*)m_malloc_with_finaliser(sizeof(mp_obj_lpf2_port_t));
+    SELF_TYPE *o = (SELF_TYPE*)m_malloc_with_finaliser(sizeof(SELF_TYPE));
     o->base.type = type;
 
     o->cpp_obj = new PortTrampoline(MP_OBJ_FROM_PTR(o));
@@ -221,7 +221,7 @@ DEFINE_PORT_METHOD(get_view_count, (mp_obj_t self_in)
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
-DEFINE_PORT_METHOD(get_mode, (mp_obj_t self_in, mp_obj_t num)
+static mp_obj_t lpf2_port_get_mode(mp_obj_t self_in, mp_obj_t num)
 {
     auto self = GET_SELF_CPP();
     auto& modes = self->getModes();
@@ -235,8 +235,8 @@ DEFINE_PORT_METHOD(get_mode, (mp_obj_t self_in, mp_obj_t num)
     mode->cpp_obj = new Lpf2::Mode(modes[modeNum]);
     mode->owned = true; // owned by the mode
     return MP_OBJ_FROM_PTR(mode);
-},
-MP_DEFINE_CONST_FUN_OBJ_2);
+};
+static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_port_get_mode_obj, lpf2_port_get_mode);
 
 DEFINE_PORT_METHOD(get_mode_combo_count, (mp_obj_t self_in)
 {
@@ -275,12 +275,6 @@ DEFINE_PORT_METHOD(get_info_str, (mp_obj_t self_in)
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
-DEFINE_PORT_METHOD(get_port_num, (mp_obj_t self_in)
-{
-    return mp_obj_new_int((uint8_t)GET_SELF_CPP()->getPortNum());
-},
-MP_DEFINE_CONST_FUN_OBJ_1);
-
 DEFINE_PORT_METHOD(speed_to_raw, (mp_obj_t self_in, mp_obj_t speed)
 {
     return mp_obj_new_int((int)Lpf2::Port::speedToRaw((int8_t)mp_obj_get_int(speed)));
@@ -297,7 +291,7 @@ DEFINE_PORT_METHOD(del, (mp_obj_t self_in)
 {
     auto self = GET_SELF();
     LPF2_LOG_V("Deleting Port, owner: %s", self->owned ? "true" : "false");
-    if (self->owned)
+    if (self->owned && self->cpp_obj)
     {
         delete self->cpp_obj;
         self->cpp_obj = nullptr;
@@ -334,7 +328,6 @@ static const mp_rom_map_elem_t lpf2_port_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_getOutputModes), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_output_modes))},
     {MP_ROM_QSTR(MP_QSTR_getCapabilities), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_capabilities))},
     {MP_ROM_QSTR(MP_QSTR_getInfoStr), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_info_str))},
-    {MP_ROM_QSTR(MP_QSTR_getPortNum), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_port_num))},
     {MP_ROM_QSTR(MP_QSTR_speedToRaw), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(speed_to_raw))},
     {MP_ROM_QSTR(MP_QSTR_rawToSpeed), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(raw_to_speed))},
 };
@@ -342,7 +335,7 @@ static const mp_rom_map_elem_t lpf2_port_locals_table[] = {
 static MP_DEFINE_CONST_DICT(lpf2_port_locals_dict, lpf2_port_locals_table);
 
 MP_DEFINE_CONST_OBJ_TYPE(
-    lpf2_port_type, 
+    lpf2_port_type,
     MP_QSTR_port,
     MP_TYPE_FLAG_NONE,
     make_new, (void*)lpf2_port_make_new,
@@ -350,7 +343,7 @@ MP_DEFINE_CONST_OBJ_TYPE(
 );
 
 MP_DEFINE_CONST_OBJ_TYPE(
-    lpf2_local_port_type, 
+    lpf2_local_port_type,
     MP_QSTR_local_port,
     MP_TYPE_FLAG_NONE,
     parent, &lpf2_port_type,

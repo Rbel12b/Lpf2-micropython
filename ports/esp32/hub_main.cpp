@@ -58,8 +58,6 @@ void hub_main_task(void *pvParameter)
     }
 }
 
-Lpf2::HubEmulation vHub("Technic Hub", Lpf2::HubType::CONTROL_PLUS_HUB);
-
 Lpf2::Virtual::Port vLEDPort;
 Lpf2::Virtual::GenericDevice vLED(Lpf2::DeviceDescriptors::HUB_LED);
 
@@ -85,29 +83,12 @@ void setup()
 
     vLED.setWriteDataCallback(vLEDWriteCallback);
     vLEDPort.attachDevice(&vLED);
-
-    vHub.attachPort((Lpf2::PortNum)Lpf2::ControlPlusHubPort::A, &portA);
-    vHub.attachPort((Lpf2::PortNum)Lpf2::ControlPlusHubPort::B, &portB);
-    vHub.attachPort((Lpf2::PortNum)Lpf2::ControlPlusHubPort::C, &portC);
-    vHub.attachPort((Lpf2::PortNum)Lpf2::ControlPlusHubPort::D, &portD);
-    vHub.attachPort((Lpf2::PortNum)Lpf2::ControlPlusHubPort::LED, &vLEDPort);
-    vHub.setUseBuiltInDevices(false); // We'll provide these
-    vHub.start();
-    vHub.setHubBatteryLevel(50);
-    vHub.setHubBatteryType(Lpf2::BatteryType::NORMAL);
 }
-
-auto portALastDeviceType = Lpf2::DeviceType::UNKNOWNDEVICE;
-size_t lastBlink = 0;
-bool lastBlinkstate = false;
 
 void loop()
 {
     vTaskDelay(1);
-
     Ports_update();
-
-    vHub.update();
 }
 
 int vLEDWriteCallback(uint8_t mode, const std::vector<uint8_t> &data, void* userData)

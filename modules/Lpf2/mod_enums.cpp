@@ -56,6 +56,32 @@ LPF2_DEFINE_MOD_WITH_GLOB(device_type,
     LPF2_REG_DEVTYPE(TECHNIC_LARGE_ANGULAR_MOTOR_GREY),
 );
 
+/* --- lpf2.alerts --- */
+#define LPF2_REG_ALERT(name) LPF2_REG(name, Lpf2::HubAlertType::name)
+LPF2_DEFINE_MOD_WITH_GLOB(alerts, 
+    LPF2_REG_ALERT(LOW_BATTERY),
+    LPF2_REG_ALERT(HIGH_CURRENT),
+    LPF2_REG_ALERT(LOW_SIGNAL_STRENGTH),
+    LPF2_REG_ALERT(OVER_POWER_CONITION),
+);
+
+/* --- lpf2.battery_type --- */
+#define LPF2_REG_BATT_TYPE(name) LPF2_REG(name, Lpf2::BatteryType::name)
+LPF2_DEFINE_MOD_WITH_GLOB(battery_type, 
+    LPF2_REG_BATT_TYPE(NORMAL),
+    LPF2_REG_BATT_TYPE(RECHARGEABLE),
+);
+
+/* --- lpf2.button_state --- */
+#define LPF2_REG_BUTTON_STATE(name) LPF2_REG(name, Lpf2::ButtonState::name)
+LPF2_DEFINE_MOD_WITH_GLOB(button_state, 
+    LPF2_REG_BUTTON_STATE(PRESSED),
+    LPF2_REG_BUTTON_STATE(RELEASED),
+    LPF2_REG_BUTTON_STATE(UP),
+    LPF2_REG_BUTTON_STATE(DOWN),
+    LPF2_REG_BUTTON_STATE(STOP),
+);
+
 /* --- lpf2.color --- */
 #define LPF2_REG_COLOR(name) LPF2_REG(name, Lpf2::ColorIDX::name)
 LPF2_DEFINE_MOD_WITH_GLOB(color, 
