@@ -25,10 +25,15 @@ static mp_obj_t lpf2_port_make_new(const mp_obj_type_t *type,
 }
 
 #define DEFINE_PORT_METHOD(name, method, fun_obj_def) LPF2_DEFINE_METHOD(port_##name, method, fun_obj_def)
-
 #define DEFINE_PORT_METHOD_VAR_BETWEEN(name, method, min_args, max_args) LPF2_DEFINE_METHOD_VAR_BETWEEN(port_##name,  method, min_args, max_args)
 
-#define GET_PORT_METHOD_OBJ(name) LPF2_GET_METHOD_OBJ(port_##name)
+
+DEFINE_PORT_METHOD(update, (mp_obj_t self_in)
+{
+    GET_SELF_CPP()->update();
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_PORT_METHOD(write_data, (mp_obj_t self_in,
                                            mp_obj_t mode_in,
@@ -236,7 +241,7 @@ static mp_obj_t lpf2_port_get_mode(mp_obj_t self_in, mp_obj_t num)
     mode->owned = true; // owned by the mode
     return MP_OBJ_FROM_PTR(mode);
 };
-static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_port_get_mode_obj, lpf2_port_get_mode);
+MP_DEFINE_CONST_FUN_OBJ_2(lpf2_port_get_mode_obj, lpf2_port_get_mode);
 
 DEFINE_PORT_METHOD(get_mode_combo_count, (mp_obj_t self_in)
 {
@@ -301,35 +306,36 @@ DEFINE_PORT_METHOD(del, (mp_obj_t self_in)
 MP_DEFINE_CONST_FUN_OBJ_1);
 
 static const mp_rom_map_elem_t lpf2_port_locals_table[] = {
-    {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(del))},
-    {MP_ROM_QSTR(MP_QSTR_writeData), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(write_data))},
-    {MP_ROM_QSTR(MP_QSTR_startPower), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(start_power))},
-    {MP_ROM_QSTR(MP_QSTR_setAccTime), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(set_acc_time))},
-    {MP_ROM_QSTR(MP_QSTR_setDecTime), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(set_dec_time))},
-    {MP_ROM_QSTR(MP_QSTR_startSpeed), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(start_speed))},
-    {MP_ROM_QSTR(MP_QSTR_startSpeedForTime), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(start_speed_for_time))},
-    {MP_ROM_QSTR(MP_QSTR_startSpeedForDegrees), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(start_speed_for_degrees))},
-    {MP_ROM_QSTR(MP_QSTR_gotoAbsPosition), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(goto_abs_pos))},
-    {MP_ROM_QSTR(MP_QSTR_presetEncoder), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(preset_encoder))},
-    {MP_ROM_QSTR(MP_QSTR_setRgbColorIdx), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(set_rgb_color_idx))},
-    {MP_ROM_QSTR(MP_QSTR_setRgbColor), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(set_rgb_color))},
-    {MP_ROM_QSTR(MP_QSTR_setMode), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(set_mode))},
-    {MP_ROM_QSTR(MP_QSTR_setModeCombo), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(set_mode_combo))},
-    {MP_ROM_QSTR(MP_QSTR_isDeviceConnected), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(is_device_connected))},
-    {MP_ROM_QSTR(MP_QSTR_getValue), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_value))},
-    {MP_ROM_QSTR(MP_QSTR_getValueStr), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_value_str))},
-    {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_device_type))},
-    {MP_ROM_QSTR(MP_QSTR_getModeCount), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_mode_count))},
-    {MP_ROM_QSTR(MP_QSTR_getViewCount), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_view_count))},
-    {MP_ROM_QSTR(MP_QSTR_getMode), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_mode))},
-    {MP_ROM_QSTR(MP_QSTR_getModeComboCount), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_mode_combo_count))},
-    {MP_ROM_QSTR(MP_QSTR_getModeCombo), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_mode_combo))},
-    {MP_ROM_QSTR(MP_QSTR_getInputModes), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_input_modes))},
-    {MP_ROM_QSTR(MP_QSTR_getOutputModes), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_output_modes))},
-    {MP_ROM_QSTR(MP_QSTR_getCapabilities), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_capabilities))},
-    {MP_ROM_QSTR(MP_QSTR_getInfoStr), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(get_info_str))},
-    {MP_ROM_QSTR(MP_QSTR_speedToRaw), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(speed_to_raw))},
-    {MP_ROM_QSTR(MP_QSTR_rawToSpeed), MP_ROM_PTR(&GET_PORT_METHOD_OBJ(raw_to_speed))},
+    {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(del))},
+    {MP_ROM_QSTR(MP_QSTR_update), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(update))},
+    {MP_ROM_QSTR(MP_QSTR_writeData), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(write_data))},
+    {MP_ROM_QSTR(MP_QSTR_startPower), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(start_power))},
+    {MP_ROM_QSTR(MP_QSTR_setAccTime), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(set_acc_time))},
+    {MP_ROM_QSTR(MP_QSTR_setDecTime), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(set_dec_time))},
+    {MP_ROM_QSTR(MP_QSTR_startSpeed), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(start_speed))},
+    {MP_ROM_QSTR(MP_QSTR_startSpeedForTime), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(start_speed_for_time))},
+    {MP_ROM_QSTR(MP_QSTR_startSpeedForDegrees), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(start_speed_for_degrees))},
+    {MP_ROM_QSTR(MP_QSTR_gotoAbsPosition), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(goto_abs_pos))},
+    {MP_ROM_QSTR(MP_QSTR_presetEncoder), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(preset_encoder))},
+    {MP_ROM_QSTR(MP_QSTR_setRgbColorIdx), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(set_rgb_color_idx))},
+    {MP_ROM_QSTR(MP_QSTR_setRgbColor), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(set_rgb_color))},
+    {MP_ROM_QSTR(MP_QSTR_setMode), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(set_mode))},
+    {MP_ROM_QSTR(MP_QSTR_setModeCombo), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(set_mode_combo))},
+    {MP_ROM_QSTR(MP_QSTR_isDeviceConnected), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(is_device_connected))},
+    {MP_ROM_QSTR(MP_QSTR_getValue), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_value))},
+    {MP_ROM_QSTR(MP_QSTR_getValueStr), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_value_str))},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_device_type))},
+    {MP_ROM_QSTR(MP_QSTR_getModeCount), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_mode_count))},
+    {MP_ROM_QSTR(MP_QSTR_getViewCount), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_view_count))},
+    {MP_ROM_QSTR(MP_QSTR_getMode), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_mode))},
+    {MP_ROM_QSTR(MP_QSTR_getModeComboCount), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_mode_combo_count))},
+    {MP_ROM_QSTR(MP_QSTR_getModeCombo), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_mode_combo))},
+    {MP_ROM_QSTR(MP_QSTR_getInputModes), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_input_modes))},
+    {MP_ROM_QSTR(MP_QSTR_getOutputModes), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_output_modes))},
+    {MP_ROM_QSTR(MP_QSTR_getCapabilities), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_capabilities))},
+    {MP_ROM_QSTR(MP_QSTR_getInfoStr), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_info_str))},
+    {MP_ROM_QSTR(MP_QSTR_speedToRaw), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(speed_to_raw))},
+    {MP_ROM_QSTR(MP_QSTR_rawToSpeed), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(raw_to_speed))},
 };
 
 static MP_DEFINE_CONST_DICT(lpf2_port_locals_dict, lpf2_port_locals_table);

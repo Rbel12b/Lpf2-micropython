@@ -2,7 +2,7 @@
 
 #define DEFINE_HUB_EMU_METHOD(name, method, fun_obj_def) LPF2_DEFINE_METHOD(hub_emulation_##name, method, fun_obj_def)
 #define DEFINE_HUB_EMU_METHOD_VAR_BETWEEN(name, method, min_args, max_args) LPF2_DEFINE_METHOD_VAR_BETWEEN(hub_emulation_##name,  method, min_args, max_args)
-#define GE_HUB_EMU_METHOD_OBJ(name) LPF2_GET_METHOD_OBJ(hub_emulation_##name)
+#define GET_HUB_EMU_METHOD_OBJ(name) LPF2_GET_METHOD_OBJ(hub_emulation_##name)
 
 #define SELF_TYPE mp_obj_lpf2_hub_emulation_t
 
@@ -144,19 +144,19 @@ DEFINE_HUB_EMU_METHOD(del, (mp_obj_t self_in)
 MP_DEFINE_CONST_FUN_OBJ_1);
 
 static const mp_rom_map_elem_t lpf2_hub_emulation_locals_table[] = {
-    {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(del))},
-    {MP_ROM_QSTR(MP_QSTR_start), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(start))},
-    {MP_ROM_QSTR(MP_QSTR_stop), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(stop))},
-    {MP_ROM_QSTR(MP_QSTR_setUseBuiltInDevices), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_use_built_in_devices))},
-    {MP_ROM_QSTR(MP_QSTR_setBatteryLevel), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_battery_level))},
-    {MP_ROM_QSTR(MP_QSTR_setBatteryType), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_battery_type))},
-    {MP_ROM_QSTR(MP_QSTR_setName), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_name))},
-    {MP_ROM_QSTR(MP_QSTR_setFirmwareVersion), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_fw_version))},
-    {MP_ROM_QSTR(MP_QSTR_setHardwareVersion), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_hw_version))},
-    {MP_ROM_QSTR(MP_QSTR_setButtonState), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_buton_state))},
-    {MP_ROM_QSTR(MP_QSTR_setAlert), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(set_alert))},
-    {MP_ROM_QSTR(MP_QSTR_getName), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(get_name))},
-    {MP_ROM_QSTR(MP_QSTR_attachPort), MP_ROM_PTR(&GE_HUB_EMU_METHOD_OBJ(attach_port))},
+    {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(del))},
+    {MP_ROM_QSTR(MP_QSTR_start), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(start))},
+    {MP_ROM_QSTR(MP_QSTR_stop), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(stop))},
+    {MP_ROM_QSTR(MP_QSTR_setUseBuiltInDevices), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(set_use_built_in_devices))},
+    {MP_ROM_QSTR(MP_QSTR_setBatteryLevel), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(set_battery_level))},
+    {MP_ROM_QSTR(MP_QSTR_setBatteryType), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(set_battery_type))},
+    {MP_ROM_QSTR(MP_QSTR_setName), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(set_name))},
+    {MP_ROM_QSTR(MP_QSTR_setFirmwareVersion), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(set_fw_version))},
+    {MP_ROM_QSTR(MP_QSTR_setHardwareVersion), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(set_hw_version))},
+    {MP_ROM_QSTR(MP_QSTR_setButtonState), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(set_buton_state))},
+    {MP_ROM_QSTR(MP_QSTR_setAlert), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(set_alert))},
+    {MP_ROM_QSTR(MP_QSTR_getName), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(get_name))},
+    {MP_ROM_QSTR(MP_QSTR_attachPort), MP_ROM_PTR(&GET_HUB_EMU_METHOD_OBJ(attach_port))},
 };
 
 static MP_DEFINE_CONST_DICT(lpf2_hub_emulation_locals_dict, lpf2_hub_emulation_locals_table);
